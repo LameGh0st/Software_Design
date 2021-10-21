@@ -1,5 +1,6 @@
 from Board_Class import *
 from Ship_Class import *
+import random
 
 
 #-----------------------------------------------------------------------------
@@ -32,11 +33,23 @@ def play_game():
     hidden_board = Board(10,10)
     battleship = Ship(5, "North")
     submarine = Ship(3, "West")
-    hidden_board.place_ship(battleship, (1,1), 5, "North")
-    hidden_board.place_ship(submarine, (5,5), 3, "West")
-    #show_board(hidden_board.board)
-    #hidden_board.place_ship((2,1),4)
-    #hidden_board.place_ship((5,5),3)
+    direction_list = ["North", "South", "East", "West"]
+    direction = random.choice(direction_list)
+    x = random.randint(0, hidden_board.width-1)
+    y = random.randint(0, hidden_board.length-1)
+    while hidden_board.legal_placement(battleship, (x,y), battleship.size, direction) == False:
+        x = random.randint(0, hidden_board.width-1)
+        y = random.randint(0, hidden_board.length-1)
+        direction = random.choice(direction_list)
+    hidden_board.place_ship(battleship, (x,y), battleship.size, direction)
+    x = random.randint(0, hidden_board.width-1)
+    y = random.randint(0, hidden_board.length-1)
+    direction = random.choice(direction_list)
+    while hidden_board.legal_placement(submarine, (x,y), submarine.size, direction) == False:
+        x = random.randint(0, hidden_board.width-1)
+        y = random.randint(0, hidden_board.length-1)
+        direction = random.choice(direction_list)
+    hidden_board.place_ship(submarine, (x,y), submarine.size, direction)
     cords_shot_at = []
     values_on_board = get_board_values(hidden_board.board)
     show_board(public_board.board)
