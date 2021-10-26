@@ -6,16 +6,16 @@ class Board:
         for i in range(self.length):
             row = []
             for j in range(self.width):
-                row.append(0)
+                row.append('0')
             self.board.append(row)
         self.ships_on_board = []
 
-    def legal_placement(self, ship, cor, length, direction):
+    def legal_placement(self, ship, cor, length):
         direct_dict = {"North": (0,-1),
                        "South": (0,1),
                        "East": (1,0),
                        "West": (-1,0)}
-        dir = direct_dict[direction]
+        dir = direct_dict[ship.direction]
         x,y = cor
         y += -1
         x += -1
@@ -38,12 +38,12 @@ class Board:
         return True
 
 
-    def place_ship(self, ship, cor, length, direction):
+    def place_ship(self, ship, cor, length):
         direct_dict = {"North": (0,-1),
                        "South": (0,1),
                        "East": (1,0),
                        "West": (-1,0)}
-        dir = direct_dict[direction]
+        dir = direct_dict[ship.direction]
         x,y = cor
         y += -1
         x += -1

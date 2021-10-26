@@ -13,13 +13,20 @@ def get_board_values(board):
     sum = 0
     for i in range(len(board)):
         for j in board[i]:
-            sum += j
+            sum += int(j)
     return sum
 #-----------------------------------------------------------------------------
 def show_board(board):
-    for i in board:
-        print(i)
+    letters = []
+    nums = []
+    for i in range(len(board)):
+        letters.append(chr(65+i))
+    for i in range(len(board)):
+        print(letters[i], board[i])
         print('')
+    for i in range(len(board[0])):
+        nums.append(str(i+1))
+    print(' ', nums)
 #-----------------------------------------------------------------------------
 def Fire(Cor, board):
     a,b = Cor
@@ -28,28 +35,34 @@ def Fire(Cor, board):
     else:
         return False
 #-----------------------------------------------------------------------------
+def direction_list(board):
+    direction_list = ["North", "South", "East", "West"]
+    direction = random.choice(direction_list)
+    x = random.randint(0, board.width-1)
+    y = random.randint(0, board.length-1)
+    return [direction, x, y]
+#-----------------------------------------------------------------------------
+def bot_placement(board):
+    carrier = Ship(5, "North")
+    battleship = Ship(4, "North")
+    submarine = Ship(3, "North")
+    destroyer = Ship(3, "North")
+    cruiser = Ship(2, "North")
+    ship_list = [carrier, battleship, submarine, destroyer, cruiser]
+    for ship in ship_list:
+        dir_list = direction_list(board)
+        direction, x, y = dir_list[0], dir_list[1], dir_list[2]
+        while board.legal_placement(ship, (x,y), ship.size) == False:
+            dir_list = direction_list(board)
+            direction, x, y = dir_list[0], dir_list[1], dir_list[2]
+        ship.direction = direction
+        print((x,y))
+        board.place_ship(ship, (x,y), ship.size)
+#-----------------------------------------------------------------------------
 def play_game():
     public_board = Board(10,10)
     hidden_board = Board(10,10)
-    battleship = Ship(5, "North")
-    submarine = Ship(3, "West")
-    direction_list = ["North", "South", "East", "West"]
-    direction = random.choice(direction_list)
-    x = random.randint(0, hidden_board.width-1)
-    y = random.randint(0, hidden_board.length-1)
-    while hidden_board.legal_placement(battleship, (x,y), battleship.size, direction) == False:
-        x = random.randint(0, hidden_board.width-1)
-        y = random.randint(0, hidden_board.length-1)
-        direction = random.choice(direction_list)
-    hidden_board.place_ship(battleship, (x,y), battleship.size, direction)
-    x = random.randint(0, hidden_board.width-1)
-    y = random.randint(0, hidden_board.length-1)
-    direction = random.choice(direction_list)
-    while hidden_board.legal_placement(submarine, (x,y), submarine.size, direction) == False:
-        x = random.randint(0, hidden_board.width-1)
-        y = random.randint(0, hidden_board.length-1)
-        direction = random.choice(direction_list)
-    hidden_board.place_ship(submarine, (x,y), submarine.size, direction)
+    bot_placement(hidden_board)
     cords_shot_at = []
     values_on_board = get_board_values(hidden_board.board)
     show_board(public_board.board)
@@ -73,8 +86,8 @@ def play_game():
                 show_board(public_board.board)
                 values_on_board += -1
             else:
-                hidden_board.board[x][y] = "O"
-                public_board.board[x][y] = 'O'
+                hidden_board.board[x][y] = "M"
+                public_board.board[x][y] = 'M'
                 print("Miss!")
                 show_board(public_board.board)
         else:
