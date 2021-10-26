@@ -10,7 +10,7 @@ class Board:
             self.board.append(row)
         self.ships_on_board = []
 
-    def legal_placement(self, ship, cor, length):
+    def legal_placement(self, ship, cor):
         direct_dict = {"North": (0,-1),
                        "South": (0,1),
                        "East": (1,0),
@@ -26,7 +26,7 @@ class Board:
         a,b = dir
         if self.board[y][x] == 1:
             return False
-        for i in range(length-1):
+        for i in range(ship.length-1):
             y += b
             x += a
             if x < 0 or y < 0:
@@ -38,7 +38,7 @@ class Board:
         return True
 
 
-    def place_ship(self, ship, cor, length):
+    def place_ship(self, ship, cor):
         direct_dict = {"North": (0,-1),
                        "South": (0,1),
                        "East": (1,0),
@@ -50,7 +50,7 @@ class Board:
         a,b = dir
         self.board[y][x] = 1
         ship.ship_cords.append((x,y))
-        for i in range(length-1):
+        for i in range(ship.length-1):
             y += b
             x += a
             self.board[y][x]=1

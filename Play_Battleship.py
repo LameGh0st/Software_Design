@@ -52,12 +52,33 @@ def bot_placement(board):
     for ship in ship_list:
         dir_list = direction_list(board)
         direction, x, y = dir_list[0], dir_list[1], dir_list[2]
-        while board.legal_placement(ship, (x,y), ship.size) == False:
+        while board.legal_placement(ship, (x,y)) == False:
             dir_list = direction_list(board)
             direction, x, y = dir_list[0], dir_list[1], dir_list[2]
         ship.direction = direction
         print((x,y))
-        board.place_ship(ship, (x,y), ship.size)
+        board.place_ship(ship, (x,y))
+#-----------------------------------------------------------------------------
+def player_placement(board):
+    carrier = Ship(5, "North", "carrier")
+    battleship = Ship(4, "North", "battleship")
+    submarine = Ship(3, "North", "submarine")
+    destroyer = Ship(3, "North", "destroyer")
+    cruiser = Ship(2, "North", "cruiser")
+    ship_list = [carrier, battleship, submarine, destroyer, cruiser]
+    for ship in range(len(ship_list)):
+        val = input("Choose a corrdinate to place your {name}".format(name = ship.name))
+        cor = get_coords(val)
+        direction = input("Choose a direction to orientate the ship: North, South, East, or West")
+        while board.legal_placement(ship, cor) == False:
+            print("Cannot place a ship there")
+            val = input("Choose a new corrdinate to place your {name}".format(name = ship.name))
+            cor = get_coords(val)
+            direction = input("Choose a new direction to orientate the ship: North, South, East, or West")
+        ship.direction = direction
+        board.place_ship(ship, cor)
+
+
 #-----------------------------------------------------------------------------
 def play_game():
     public_board = Board(10,10)
