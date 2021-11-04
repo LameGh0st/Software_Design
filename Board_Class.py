@@ -1,3 +1,5 @@
+import random as rand
+
 class Board:
     def __init__(self,length, width):
         self.width = width
@@ -9,6 +11,12 @@ class Board:
                 row.append('0')
             self.board.append(row)
         self.ships_on_board = []
+        self.possible_cords = []
+        for i in range(self.length):
+            for j in range(self.width):
+                self.possible_cords.append((j, i))
+        self.cords_shot_at = []
+        
 
     def legal_placement(self, ship, cor):
         direct_dict = {"North": (0,-1),
@@ -17,23 +25,21 @@ class Board:
                        "West": (-1,0)}
         dir = direct_dict[ship.direction]
         x,y = cor
-        y += -1
-        x += -1
-        if x < 1 or y < 1:
+        if x < 0 or y < 0:
             return False
         if x >= self.width or y >= self.length:
             return False
         a,b = dir
-        if self.board[y][x] == 1:
+        if self.board[y][x] == '1':
             return False
-        for i in range(ship.length-1):
+        for i in range(ship.size-1):
             y += b
             x += a
             if x < 0 or y < 0:
                 return False
             if x >= self.width or y >= self.length:
                 return False
-            if self.board[y][x] == 1:
+            if self.board[y][x] == '1':
                 return False
         return True
 
@@ -45,22 +51,22 @@ class Board:
                        "West": (-1,0)}
         dir = direct_dict[ship.direction]
         x,y = cor
-        y += -1
-        x += -1
         a,b = dir
-        self.board[y][x] = 1
+        self.board[y][x] = '1'
         ship.ship_cords.append((x,y))
-        for i in range(ship.length-1):
+        for i in range(ship.size-1):
             y += b
             x += a
-            self.board[y][x]=1
+            print((x,y), (a,b), ship.direction)
+            self.board[y][x]= '1'
             ship.ship_cords.append((x,y))
         self.ships_on_board.append(ship)
         
 
 
 if __name__ == '__main__':
-    pass
+    public_board = Board(10,10)
+    print(public_board.possible_cords)
     
         
 
