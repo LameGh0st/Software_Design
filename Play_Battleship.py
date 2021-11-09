@@ -171,13 +171,12 @@ def play_game():
             player_turn(player_guess_board, bot_hidden_board, cord)
             turn += 1
             print("turn over")
-            print(bot_hidden_board.hp)
         else:
             print("The bots turn\n")
+            x,y = possible_cords[0]
+            print("The bot fired at {letter}{number}".format(letter = chr(y+65), number = x+1))
             bot_turn(bot_guess_board, player_hidden_board, possible_cords)
-            
-
-            print("The bot fired at ({:f},{:f})".format(possible_cords[0][0],possible_cords[0][1]))
+            print("Your board\n")
             show_board(player_hidden_board.board)
             possible_cords = possible_cords[1:]
             turn += 1
