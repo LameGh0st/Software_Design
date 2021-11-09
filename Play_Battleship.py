@@ -28,9 +28,9 @@ def show_board(board):
         nums.append(str(i+1))
     print(' ', nums)
 #-----------------------------------------------------------------------------
-def Fire(Cor, board):
-    a,b = Cor
-    if board.board[a][b] == '1':
+def Fire(cor, board):
+    x,y = cor
+    if board.board[y][x] == '1':
         return True
     else:
         return False
@@ -60,7 +60,6 @@ def bot_placement(board):
             direction, x, y = dir_list[0], dir_list[1], dir_list[2]
             ship.direction = direction
         ship.direction = direction
-        print((x,y))
         board.place_ship(ship, (x,y))
 #-----------------------------------------------------------------------------
 def player_placement(board):
@@ -89,46 +88,47 @@ def player_placement(board):
 def bot_turn(bot_guess_board, player_hidden_board, cords):
     cord = cords[0] 
     x,y = cord
-    if Fire(cord, bot_guess_board):
-        bot_guess_board[y][x] = 'X'
-        player_hidden_board[y][x] = 'X'
+    if Fire(cord, player_hidden_board):
+        bot_guess_board.board[y][x] = 'X'
+        player_hidden_board.board[y][x] = 'X'
         bot_guess_board.cords_shot_at.append(cord)
         for ship in bot_guess_board.ships_on_board:
-                    if (y,x) in ship.ship_cords:
+                    if (x,y) in ship.ship_cords:
                         ship.hp -= 1
                         if ship.hp == 0:
                             print("Hit!")
                             print("The AI sunk a ship!")
                         else:
                             print("Hit!")
-        show_board(bot_guess_board)
+        player_hidden_board.hp
+        show_board(bot_guess_board.board)
     else:
-        bot_guess_board[y][x] = 'M'
-        player_hidden_board[y][x] = 'M'
+        bot_guess_board.board[y][x] = 'M'
+        player_hidden_board.board[y][x] = 'M'
         bot_guess_board.cords_shot_at.append(cord)
         print('Miss')
-        show_board(bot_guess_board)
+        show_board(bot_guess_board.board)
 #-----------------------------------------------------------------------------
 def player_turn(player_guess_board, bot_hidden_board, cord):
-    print(cord)
     if cord not in player_guess_board.cords_shot_at:
         player_guess_board.cords_shot_at.append(cord)
         x,y = cord
-        if Fire(cord, player_guess_board):
-            bot_hidden_board.board[x][y] = "X"
-            player_guess_board.board[x][y] = 'X'
+        if Fire(cord, bot_hidden_board):
+            bot_hidden_board.board[y][x] = "X"
+            player_guess_board.board[y][x] = 'X'
             for ship in bot_hidden_board.ships_on_board:
-                if (y,x) in ship.ship_cords:
+                if (x,y) in ship.ship_cords:
                     ship.hp -= 1
                     if ship.hp == 0:
                         print("Hit!")
-                        print("You sunk a ship!")
+                        print("You sunk a {name}".format(name = ship.name))
                     else:
                         print("Hit!")
+            bot_hidden_board.hp -= 1
             show_board(player_guess_board.board)
         else:
-            bot_hidden_board.board[x][y] = "M"
-            player_guess_board.board[x][y] = 'M'
+            bot_hidden_board.board[y][x] = "M"
+            player_guess_board.board[y][x] = 'M'
             print("Miss!")
             show_board(player_guess_board.board)
     else:
@@ -139,72 +139,53 @@ def play_game():
     player_guess_board = Board(10,10)
     bot_hidden_board = Board(10,10)
     bot_guess_board = Board(10,10)
-    #print(bot_guess_board.possible_cords)
+
     
 
     bot_placement(bot_hidden_board)
-    #print(bot_guess_board.possible_cords)
+
     player_placement(player_hidden_board)
-    print(bot_guess_board.possible_cords)
+
+    show_board(bot_hidden_board.board)
 
     player_cords_shot_at = []
-    player_hp = get_board_values(player_hidden_board.board)
-    bot_hp = get_board_values(bot_hidden_board.board)
-    print(bot_guess_board.possible_cords)
-    bot_directions = rand.shuffle(player_hidden_board.possible_cords)
+    possible_cords = []
+    for i in range(bot_guess_board.length):
+            for j in range(bot_guess_board.width):
+                possible_cords.append((j, i))
 
-    show_board(player_guess_board.board)
+    player_hidden_board.hp = get_board_values(player_hidden_board.board)
+    bot_hidden_board.hp = get_board_values(bot_hidden_board.board)
+    bot_directions = rand.shuffle(possible_cords)
+
+
+
+    #show_board(player_guess_board.board)
     turn = 0
-    while 0 < player_hp or 0 < bot_hp:
+    while 0 < player_hidden_board.hp and 0 < bot_hidden_board.hp:
         if turn % 2 == 0:
+            print("Your turn\n")
+            show_board(player_guess_board.board)
             val = input("Choose a coordinate to fire at!\n")
             cord = get_coords(val)
             player_turn(player_guess_board, bot_hidden_board, cord)
-            if Fire(cord, bot_hidden_board):
-                bot_hp -= 1
             turn += 1
             print("turn over")
+            print(bot_hidden_board.hp)
         else:
-            print(bot_directions)
-            bot_turn(bot_guess_board, player_hidden_board, bot_directions)
+            print("The bots turn\n")
+            bot_turn(bot_guess_board, player_hidden_board, possible_cords)
             
-            if Fire(bot_directions[0]):
-                player_hp -= 1
-            bot_directions = bot_directions[1:]
+
+            print("The bot fired at ({:f},{:f})".format(possible_cords[0][0],possible_cords[0][1]))
+            show_board(player_hidden_board.board)
+            possible_cords = possible_cords[1:]
             turn += 1
-    if player_hp < 0:
+    if player_hidden_board.hp <= 0:
         print("The AI sunk all your ships, you lost")
-    elif bot_hp < 0: 
+    elif bot_hidden_board.hp <= 0: 
         print("Congrats you win!\nYou sunk all of the enemy ships")
 
-
-
-        #val = input("Choose a coordinate to fire at!\n")
-        #cord = get_coords(val)
-        #if cord not in cords_shot_at:
-            #cords_shot_at.append(cord)
-            #x,y = cord
-            #if Fire(cord, hidden_board):
-                #hidden_board.board[x][y] = "X"
-                #public_board.board[x][y] = 'X'
-                #for ship in hidden_board.ships_on_board:
-                    #if (y,x) in ship.ship_cords:
-                        #ship.hp -= 1
-                        #if ship.hp == 0:
-                            #print("Hit!")
-                            #print("You sunk a ship!")
-                        #else:
-                            #print("Hit!")
-                #show_board(public_board.board)
-                #values_on_board += -1
-            #else:
-                #hidden_board.board[x][y] = "M"
-                #public_board.board[x][y] = 'M'
-                #print("Miss!")
-                #show_board(public_board.board)
-        #else:
-            #print("You already fired at that location, choose a different coordinate")
-    #print("Congrats you win!\nYou sunk all of the enemy ships")
 #-----------------------------------------------------------------------------
 
 

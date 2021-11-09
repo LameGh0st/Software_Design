@@ -11,11 +11,8 @@ class Board:
                 row.append('0')
             self.board.append(row)
         self.ships_on_board = []
-        self.possible_cords = []
-        for i in range(self.length):
-            for j in range(self.width):
-                self.possible_cords.append((j, i))
         self.cords_shot_at = []
+        self.hp = 0
         
 
     def legal_placement(self, ship, cor):
@@ -57,7 +54,7 @@ class Board:
         for i in range(ship.size-1):
             y += b
             x += a
-            print((x,y), (a,b), ship.direction)
+            print((chr(y+65),x+1),ship.direction)
             self.board[y][x]= '1'
             ship.ship_cords.append((x,y))
         self.ships_on_board.append(ship)
@@ -66,7 +63,7 @@ class Board:
 
 if __name__ == '__main__':
     public_board = Board(10,10)
-    print(public_board.possible_cords)
+
     
         
 
