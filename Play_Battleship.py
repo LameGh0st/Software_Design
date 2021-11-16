@@ -51,13 +51,10 @@ def bot_placement(board):
     cruiser = Ship(2, "North", "curiser")
     ship_list = [carrier, battleship, submarine, destroyer, cruiser]
     for ship in ship_list:
-        dir_list = direction_list(board)
-       #switch
-        direction, x, y = dir_list[0], dir_list[1], dir_list[2]
+        direction, x, y = direction_list(board)
         ship.direction = direction
         while board.legal_placement(ship, (x,y)) == False:
-            dir_list = direction_list(board)
-            direction, x, y = dir_list[0], dir_list[1], dir_list[2]
+            direction, x, y = direction_list(board)
             ship.direction = direction
         ship.direction = direction
         board.place_ship(ship, (x,y))
@@ -156,11 +153,11 @@ def play_game():
 
     player_hidden_board.hp = get_board_values(player_hidden_board.board)
     bot_hidden_board.hp = get_board_values(bot_hidden_board.board)
-    bot_directions = rand.shuffle(possible_cords)
+    rand.shuffle(possible_cords)
 
 
 
-    #show_board(player_guess_board.board)
+
     turn = 0
     while 0 < player_hidden_board.hp and 0 < bot_hidden_board.hp:
         if turn % 2 == 0:
@@ -168,9 +165,13 @@ def play_game():
             show_board(player_guess_board.board)
             val = input("Choose a coordinate to fire at!\n")
             cord = get_coords(val)
-            player_turn(player_guess_board, bot_hidden_board, cord)
-            turn += 1
-            print("turn over")
+            if cord not in player_guess_board.cords_shot_at:
+                player_turn(player_guess_board, bot_hidden_board, cord)
+                player_cords_shot_at.append(cord)
+                turn += 1
+                print("turn over")
+            else:
+                print("You've already fired at that location")
         else:
             print("The bots turn\n")
             x,y = possible_cords[0]

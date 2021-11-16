@@ -54,7 +54,6 @@ class Board:
         for i in range(ship.size-1):
             y += b
             x += a
-            print((chr(y+65),x+1),ship.direction)
             self.board[y][x]= '1'
             ship.ship_cords.append((x,y))
         self.ships_on_board.append(ship)
