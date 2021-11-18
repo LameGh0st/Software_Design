@@ -107,29 +107,26 @@ def bot_turn(bot_guess_board, player_hidden_board, cords):
         show_board(bot_guess_board.board)
 #-----------------------------------------------------------------------------
 def player_turn(player_guess_board, bot_hidden_board, cord):
-    if cord not in player_guess_board.cords_shot_at:
-        player_guess_board.cords_shot_at.append(cord)
-        x,y = cord
-        if Fire(cord, bot_hidden_board):
-            bot_hidden_board.board[y][x] = "X"
-            player_guess_board.board[y][x] = 'X'
-            for ship in bot_hidden_board.ships_on_board:
-                if (x,y) in ship.ship_cords:
-                    ship.hp -= 1
-                    if ship.hp == 0:
-                        print("Hit!")
-                        print("You sunk a {name}".format(name = ship.name))
-                    else:
-                        print("Hit!")
-            bot_hidden_board.hp -= 1
-            show_board(player_guess_board.board)
-        else:
-            bot_hidden_board.board[y][x] = "M"
-            player_guess_board.board[y][x] = 'M'
-            print("Miss!")
-            show_board(player_guess_board.board)
+    player_guess_board.cords_shot_at.append(cord)
+    x,y = cord
+    if Fire(cord, bot_hidden_board):
+        bot_hidden_board.board[y][x] = "X"
+        player_guess_board.board[y][x] = 'X'
+        for ship in bot_hidden_board.ships_on_board:
+            if (x,y) in ship.ship_cords:
+                ship.hp -= 1
+                if ship.hp == 0:
+                    print("Hit!")
+                    print("You sunk a {name}".format(name = ship.name))
+                else:
+                    print("Hit!")
+        bot_hidden_board.hp -= 1
+        show_board(player_guess_board.board)
     else:
-        print("You already fired at that location, choose a different coordinate")
+        bot_hidden_board.board[y][x] = "M"
+        player_guess_board.board[y][x] = 'M'
+        print("Miss!")
+        show_board(player_guess_board.board)
 #-----------------------------------------------------------------------------
 def play_game():
     player_hidden_board = Board(10,10)
