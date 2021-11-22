@@ -1,6 +1,7 @@
 from Board_Class import *
 from Ship_Class import *
 import random
+from graphics import *
 
 
 #-----------------------------------------------------------------------------
@@ -106,12 +107,13 @@ def bot_turn(bot_guess_board, player_hidden_board, cords):
         print('Miss')
         show_board(bot_guess_board.board)
 #-----------------------------------------------------------------------------
-def player_turn(player_guess_board, bot_hidden_board, cord):
+def player_turn(player_guess_board, bot_hidden_board, board_of_rectangles, cord):
     player_guess_board.cords_shot_at.append(cord)
     x,y = cord
     if Fire(cord, bot_hidden_board):
         bot_hidden_board.board[y][x] = "X"
         player_guess_board.board[y][x] = 'X'
+        board_of_rectangles[y][x].setFill('red')
         for ship in bot_hidden_board.ships_on_board:
             if (x,y) in ship.ship_cords:
                 ship.hp -= 1
@@ -125,6 +127,7 @@ def player_turn(player_guess_board, bot_hidden_board, cord):
     else:
         bot_hidden_board.board[y][x] = "M"
         player_guess_board.board[y][x] = 'M'
+        board_of_rectangles[y][x].setFill('grey')
         print("Miss!")
         show_board(player_guess_board.board)
 #-----------------------------------------------------------------------------
@@ -134,7 +137,32 @@ def play_game():
     bot_hidden_board = Board(10,10)
     bot_guess_board = Board(10,10)
 
-    
+
+    length = 500
+    width = 500
+    delta_width = width / bot_hidden_board.width
+    delta_length = length / bot_hidden_board.length
+    x, y = 0, 0
+    p1 = Point(x,y)
+    p2 = Point(x + delta_width, y + delta_length)
+
+    guess_board = GraphWin("Guessing Board", width, length)
+    board_of_rectangles = []
+
+    for i in range(bot_hidden_board.length):
+        row = []
+        for j in range(bot_hidden_board.width):
+            r = Rectangle(p1,p2)
+            row.append(r)
+            r.draw(guess_board)
+            x = x + delta_width
+            p1 = Point(x,y)
+            p2 = Point(x + delta_width, y + delta_length)
+        board_of_rectangles.append(row)
+        x = 0
+        y += delta_length
+        p1 = Point(x,y)
+        p2 = Point(x + delta_width, y + delta_length)
 
     bot_placement(bot_hidden_board)
 
@@ -160,10 +188,16 @@ def play_game():
         if turn % 2 == 0:
             print("Your turn\n")
             show_board(player_guess_board.board)
-            val = input("Choose a coordinate to fire at!\n")
-            cord = get_coords(val)
+            print("Click a spot to fire at!\n")
+            point = guess_board.getMouse()
+            x = point.getX()
+            y = point.getY()
+            x = int(x // delta_width)
+            y = int(y // delta_length)
+            cord = (x,y)
+            print(cord)
             if cord not in player_guess_board.cords_shot_at:
-                player_turn(player_guess_board, bot_hidden_board, cord)
+                player_turn(player_guess_board, bot_hidden_board, board_of_rectangles, cord)
                 player_cords_shot_at.append(cord)
                 turn += 1
                 print("turn over")
