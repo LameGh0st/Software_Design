@@ -83,12 +83,13 @@ def player_placement(board):
         board.place_ship(ship, cor)
     show_board(board.board)
 #-----------------------------------------------------------------------------
-def bot_turn(bot_guess_board, player_hidden_board, cords):
+def bot_turn(bot_guess_board, player_hidden_board, board_of_rectangles, cords):
     cord = cords[0] 
     x,y = cord
     if Fire(cord, player_hidden_board):
         bot_guess_board.board[y][x] = 'X'
         player_hidden_board.board[y][x] = 'X'
+        board_of_rectangles[y][x].setFill('red')
         bot_guess_board.cords_shot_at.append(cord)
         for ship in bot_guess_board.ships_on_board:
                     if (x,y) in ship.ship_cords:
@@ -98,11 +99,12 @@ def bot_turn(bot_guess_board, player_hidden_board, cords):
                             print("The AI sunk a ship!")
                         else:
                             print("Hit!")
-        player_hidden_board.hp
+        player_hidden_board.hp -= 1
         show_board(bot_guess_board.board)
     else:
         bot_guess_board.board[y][x] = 'M'
         player_hidden_board.board[y][x] = 'M'
+        board_of_rectangles[y][x].setFill('white')
         bot_guess_board.cords_shot_at.append(cord)
         print('Miss')
         show_board(bot_guess_board.board)
@@ -127,7 +129,7 @@ def player_turn(player_guess_board, bot_hidden_board, board_of_rectangles, cord)
     else:
         bot_hidden_board.board[y][x] = "M"
         player_guess_board.board[y][x] = 'M'
-        board_of_rectangles[y][x].setFill('grey')
+        board_of_rectangles[y][x].setFill('white')
         print("Miss!")
         show_board(player_guess_board.board)
 #-----------------------------------------------------------------------------
@@ -147,18 +149,27 @@ def play_game():
     p2 = Point(x + delta_width, y + delta_length)
 
     guess_board = GraphWin("Guessing Board", width, length)
-    board_of_rectangles = []
+    known_board = GraphWin("Your Board", width, length)
+    guess_board.setBackground("blue")
+    known_board.setBackground("blue")
+    guess_rectangles = []
+    known_rectangles = []
 
     for i in range(bot_hidden_board.length):
-        row = []
+        row1 = []
+        row2 = []
         for j in range(bot_hidden_board.width):
-            r = Rectangle(p1,p2)
-            row.append(r)
-            r.draw(guess_board)
+            r1 = Rectangle(p1,p2)
+            r2 = Rectangle(p1,p2)
+            row1.append(r1)
+            row2.append(r2)
+            r1.draw(guess_board)
+            r2.draw(known_board)
             x = x + delta_width
             p1 = Point(x,y)
             p2 = Point(x + delta_width, y + delta_length)
-        board_of_rectangles.append(row)
+        guess_rectangles.append(row1)
+        known_rectangles.append(row2)
         x = 0
         y += delta_length
         p1 = Point(x,y)
@@ -166,7 +177,12 @@ def play_game():
 
     bot_placement(bot_hidden_board)
 
-    player_placement(player_hidden_board)
+    bot_placement(player_hidden_board)
+
+    for i in range(player_hidden_board.length):
+        for j in range(player_hidden_board.width):
+            if player_hidden_board.board[i][j] == '1':
+                known_rectangles[i][j].setFill("grey")
 
     show_board(bot_hidden_board.board)
 
@@ -197,7 +213,7 @@ def play_game():
             cord = (x,y)
             print(cord)
             if cord not in player_guess_board.cords_shot_at:
-                player_turn(player_guess_board, bot_hidden_board, board_of_rectangles, cord)
+                player_turn(player_guess_board, bot_hidden_board, guess_rectangles, cord)
                 player_cords_shot_at.append(cord)
                 turn += 1
                 print("turn over")
@@ -207,7 +223,7 @@ def play_game():
             print("The bots turn\n")
             x,y = possible_cords[0]
             print("The bot fired at {letter}{number}".format(letter = chr(y+65), number = x+1))
-            bot_turn(bot_guess_board, player_hidden_board, possible_cords)
+            bot_turn(bot_guess_board, player_hidden_board,known_rectangles, possible_cords)
             print("Your board\n")
             show_board(player_hidden_board.board)
             possible_cords = possible_cords[1:]
