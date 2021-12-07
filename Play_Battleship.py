@@ -97,6 +97,7 @@ def bot_turn(bot_guess_board, player_hidden_board, board_of_rectangles, cords):
                         if ship.hp == 0:
                             print("Hit!")
                             print("The AI sunk a ship!")
+                            board_of_rectangles[y][x].setFill('black')
                         else:
                             print("Hit!")
         player_hidden_board.hp -= 1
@@ -122,6 +123,9 @@ def player_turn(player_guess_board, bot_hidden_board, board_of_rectangles, cord)
                 if ship.hp == 0:
                     print("Hit!")
                     print("You sunk a {name}".format(name = ship.name))
+                    for i in ship.ship_cords:
+                        x,y = i
+                        board_of_rectangles[y][x].setFill('black')
                 else:
                     print("Hit!")
         bot_hidden_board.hp -= 1
