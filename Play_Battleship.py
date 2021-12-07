@@ -91,17 +91,17 @@ def bot_turn(bot_guess_board, player_hidden_board, board_of_rectangles, cords):
         player_hidden_board.board[y][x] = 'X'
         board_of_rectangles[y][x].setFill('red')
         bot_guess_board.cords_shot_at.append(cord)
-        for ship in bot_guess_board.ships_on_board:
-                    if (x,y) in ship.ship_cords:
-                        ship.hp -= 1
-                        if ship.hp == 0:
-                            print("Hit!")
-                            print("The AI sunk a ship!")
-                            for i in ship.ship_cords:
-                                x,y = i
-                                board_of_rectangles[y][x].setFill('black')
-                        else:
-                            print("Hit!")
+        for ship in player_hidden_board.ships_on_board:
+            if (x,y) in ship.ship_cords:
+                ship.hp -= 1
+                if ship.hp == 0:
+                    print("Hit!")
+                    print("The AI sunk a ship!")
+                    for i in ship.ship_cords:
+                        x,y = i
+                        board_of_rectangles[y][x].setFill('black')
+                else:
+                    print("Hit!")
         player_hidden_board.hp -= 1
         show_board(bot_guess_board.board)
     else:
