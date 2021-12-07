@@ -2,7 +2,7 @@ from Board_Class import *
 from Ship_Class import *
 import random
 from graphics import *
-
+import time
 
 #-----------------------------------------------------------------------------
 def get_coords(cord):
@@ -225,6 +225,7 @@ def play_game():
                 print("turn over")
             else:
                 print("You've already fired at that location")
+            time.sleep(1.5)
         else:
             print("The bots turn\n")
             x,y = possible_cords[0]
