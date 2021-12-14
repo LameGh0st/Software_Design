@@ -43,7 +43,7 @@ def show_board(board):
         nums.append(str(i+1))
     print(' ', nums)
 #-----------------------------------------------------------------------------
-def Fire(cor, board):
+def fire(cor, board):
     x,y = cor
     if board.board[y][x] == '1':
         return True
@@ -146,7 +146,7 @@ def player_placement(board, win, known_rectangles):
 def bot_turn(bot_guess_board, player_hidden_board, board_of_rectangles, cords):
     cord = cords[0] 
     x,y = cord
-    if Fire(cord, player_hidden_board):
+    if fire(cord, player_hidden_board):
         bot_guess_board.board[y][x] = 'X'
         player_hidden_board.board[y][x] = 'X'
         board_of_rectangles[y][x].setFill('red')
@@ -175,7 +175,7 @@ def bot_turn(bot_guess_board, player_hidden_board, board_of_rectangles, cords):
 def player_turn(player_guess_board, bot_hidden_board, board_of_rectangles, cord):
     player_guess_board.cords_shot_at.append(cord)
     x,y = cord
-    if Fire(cord, bot_hidden_board):
+    if fire(cord, bot_hidden_board):
         bot_hidden_board.board[y][x] = "X"
         player_guess_board.board[y][x] = 'X'
         board_of_rectangles[y][x].setFill('red')
