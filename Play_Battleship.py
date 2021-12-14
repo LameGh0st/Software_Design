@@ -16,13 +16,6 @@ offset = 50
 
 delta_width = ((width - 2 * offset) / bot_hidden_board.width) 
 delta_length = ((length - 2 * offset) / bot_hidden_board.length) 
-
-
-#-----------------------------------------------------------------------------
-def get_coords(cord):
-    x,y = cord
-    num = cord[1:]
-    return (int(num)-1,ord(letter)-65)
 #-----------------------------------------------------------------------------
 def get_board_values(board):
     sum = 0
@@ -92,22 +85,22 @@ def player_placement(board, win, known_rectangles):
         while (point.getX() <= offset or point.getX() >= width - offset
         or point.getY() <= offset or point.getY() >= length - offset):
             point = win.getMouse()
-        x = point.getX()
-        y = point.getY()
+        x = point.getX() - offset
+        y = point.getY() - offset
         x = int(x  // delta_width)
         y = int(y  // delta_length)
-        cord1 = (x - 1 ,y - 1)
+        cord1 = (x,y)
 
         #Get direction
         point = win.getMouse()
         while (point.getX() <= offset or point.getX() >= width - offset
         or point.getY() <= offset or point.getY() >= length - offset):
             point = win.getMouse()
-        x = point.getX()
-        y = point.getY()
+        x = point.getX() - offset
+        y = point.getY() - offset
         x = int(x  // delta_width)
         y = int(y  // delta_length)
-        cord2 = (x - 1 ,y - 1)
+        cord2 = (x,y)
         direction = (cord2[0] - cord1[0], cord2[1] - cord1[1])
         direction = direction_list[direction]
 
@@ -118,22 +111,22 @@ def player_placement(board, win, known_rectangles):
             while (point.getX() <= offset or point.getX() >= width - offset
             or point.getY() <= offset or point.getY() >= length - offset):
                 point = win.getMouse()
-            x = point.getX()
-            y = point.getY()
+            x = point.getX() - offset
+            y = point.getY() - offset
             x = int(x  // delta_width)
             y = int(y  // delta_length)
-            cord1 = (x - 1 ,y - 1)
+            cord1 = (x,y)
 
             #Get direction
             point = win.getMouse()
             while (point.getX() <= offset or point.getX() >= width - offset
             or point.getY() <= offset or point.getY() >= length - offset):
                 point = win.getMouse()
-            x = point.getX()
-            y = point.getY()
+            x = point.getX() - offset
+            y = point.getY() - offset
             x = int(x  // delta_width)
             y = int(y  // delta_length)
-            cord2 = (x - 1 ,y - 1)
+            cord2 = (x,y)
             direction = (cord2[0] - cord1[0], cord2[1] - cord1[1])
             direction = direction_list[direction]
 
@@ -301,11 +294,11 @@ def play_game():
             while (point.getX() <= offset or point.getX() >= width - offset
              or point.getY() <= offset or point.getY() >= length - offset):
                 point = guess_board.getMouse()
-            x = point.getX()
-            y = point.getY()
+            x = point.getX() - offset
+            y = point.getY() - offset
             x = int(x  // delta_width)
             y = int(y  // delta_length)
-            cord = (x - 1 ,y - 1)
+            cord = (x,y)
             print(cord)
             if cord not in player_guess_board.cords_shot_at:
                 player_turn(player_guess_board, bot_hidden_board, guess_rectangles, cord)
