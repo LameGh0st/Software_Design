@@ -7,6 +7,7 @@
     * After clicking an initial coordinate, all adjecent tiles will turn yellow, click one of them to determine the direction the ship will be placed.
     * If a placement is invalid your initial click will dissapear along with the yellow tiles, choose a new starting location and proceed as normal.
     * After all ships have been placed click on any coordinate on "Guess Board" to fire at the opponent
+    * If a tile turns white then the shot missed, if it turns red then it was a hit. When a ship is fully sunk all the tiles will turn black
     * You and the computer will then take turns firing at one another until either of you have sunk all the others ships
 
 
