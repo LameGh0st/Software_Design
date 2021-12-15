@@ -90,11 +90,23 @@ def player_placement(board, win, known_rectangles):
         x = int(x  // delta_width)
         y = int(y  // delta_length)
         cord1 = (x,y)
+        known_rectangles[y][x].setFill("grey")
+        if x != 0:
+            known_rectangles[y][x-1].setFill("yellow")
+        if y != 0:
+            known_rectangles[y-1][x].setFill("yellow")
+        if y < board.length - 1 and y >= 0:
+            known_rectangles[y+1][x].setFill("yellow")
+        if x < board.width - 1 and x >= 0:
+            known_rectangles[y][x+1].setFill("yellow")
 
         #Get direction
         point = win.getMouse()
         while (point.getX() <= offset or point.getX() >= width - offset
         or point.getY() <= offset or point.getY() >= length - offset):
+            point = win.getMouse()
+        while ((point.getX() - offset) // delta_width - x, 
+        (point.getY() - offset)//delta_length - y) not in direction_list:
             point = win.getMouse()
         x = point.getX() - offset
         y = point.getY() - offset
@@ -106,6 +118,8 @@ def player_placement(board, win, known_rectangles):
 
         ship.direction = direction
         while board.legal_placement(ship, cord1) == False:
+            show_ships(board, known_rectangles)
+
             print("Cannot place a ship there")
             point = win.getMouse()
             while (point.getX() <= offset or point.getX() >= width - offset
@@ -116,6 +130,15 @@ def player_placement(board, win, known_rectangles):
             x = int(x  // delta_width)
             y = int(y  // delta_length)
             cord1 = (x,y)
+            known_rectangles[y][x].setFill("grey")
+            if x != 0:
+                known_rectangles[y][x-1].setFill("yellow")
+            if y != 0:
+                known_rectangles[y-1][x].setFill("yellow")
+            if y < board.length - 1 and y >= 0:
+                known_rectangles[y+1][x].setFill("yellow")
+            if x < board.width - 1 and x >= 0:
+                known_rectangles[y][x+1].setFill("yellow")
 
             #Get direction
             point = win.getMouse()
@@ -134,6 +157,7 @@ def player_placement(board, win, known_rectangles):
         ship.direction = direction
         board.place_ship(ship, cord1)
         show_ships(board, known_rectangles)
+
     show_board(board.board)
 #-----------------------------------------------------------------------------
 def bot_turn(bot_guess_board, player_hidden_board, board_of_rectangles, cords):
@@ -197,7 +221,8 @@ def show_ships(board, known_rectangles):
             for j in range(board.width):
                 if board.board[i][j] == '1':
                     known_rectangles[i][j].setFill("grey")
-
+                if board.board[i][j] == '0':
+                    known_rectangles[i][j].setFill("blue")
 #-----------------------------------------------------------------------------
 def play_game():
 

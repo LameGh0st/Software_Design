@@ -1,21 +1,30 @@
 # **Software Design**
 
+## Playing Battleship
+    * To play the battleship program run the Play_Battleship file
+    * Two GUI board will appear on your screen, one titled "Your Board" and another titled "Guess Board"
+    * On "Your Board" click any coordinate you would like to place your first ship. Ships will always be placed in order from largest to smallest
+    * After clicking an initial coordinate, all adjecent tiles will turn yellow, click one of them to determine the direction the ship will be placed.
+    * If a placement is invalid your initial click will dissapear along with the yellow tiles, choose a new starting location and proceed as normal.
+    * After all ships have been placed click on any coordinate on "Guess Board" to fire at the opponent
+    * You and the computer will then take turns firing at one another until either of you have sunk all the others ships
+
+
+
+
 ## Short Term Goals
-    * Make sure ships are placed legally
-    * Have a bot that randomly places ships on board
-    * Have the player continuously fire at the board until they sink all the enemy ships
-    * Clean up the play_game() function
+    * Clean up code
+    * rewrite repetitive code as helper functions
 
 ## Medium Term Goals
-    * Have the player start the game with placing ships on their board
-    * Have the bot randomly fire back at the player
-    * Have the play_game() function take turns between the player and the bot
+    * Turn the bot turn and placement into a class
+    * Create a sligthly smarter bot class to play agaisnt
+    * Create a GA bot to play against
 
 ## Long Term Goals
-    * Create AI that can play against the player
-    * Create a graphics board with GUI
-    * Have the ships be draggable objects onto the boards
-    * Have the tiles on the board be clickable in order to fire
+    * Create Nueral Network bot to play
+    * Make a heat map with statistacal probability to determine firing spot
 
 ## Stretch Goals
     * allow for other moves, such as a scatter-shot(Possibly a point system for different moves)
+    * How does strategy change if you keep firing when you hit a ship until you miss
