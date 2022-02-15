@@ -1,3 +1,4 @@
+from matplotlib.style import available
 from Board_Class import *
 from Ship_Class import *
 import random
@@ -67,6 +68,19 @@ def bot_placement(board):
         ship.direction = direction
         board.place_ship(ship, (x,y))
 #-----------------------------------------------------------------------------
+def available_placement(cord, board, known_rectangles):
+    x = cord[0]
+    y = cord[1]
+    known_rectangles[y][x].setFill("grey")
+    if x != 0:
+        known_rectangles[y][x-1].setFill("yellow")
+    if y != 0:
+        known_rectangles[y-1][x].setFill("yellow")
+    if y < board.length - 1 and y >= 0:
+        known_rectangles[y+1][x].setFill("yellow")
+    if x < board.width - 1 and x >= 0:
+        known_rectangles[y][x+1].setFill("yellow")
+#-----------------------------------------------------------------------------
 def player_placement(board, win, known_rectangles):
     carrier = Ship(5, "North", "carrier")
     battleship = Ship(4, "North", "battleship")
@@ -90,15 +104,7 @@ def player_placement(board, win, known_rectangles):
         x = int(x  // delta_width)
         y = int(y  // delta_length)
         cord1 = (x,y)
-        known_rectangles[y][x].setFill("grey")
-        if x != 0:
-            known_rectangles[y][x-1].setFill("yellow")
-        if y != 0:
-            known_rectangles[y-1][x].setFill("yellow")
-        if y < board.length - 1 and y >= 0:
-            known_rectangles[y+1][x].setFill("yellow")
-        if x < board.width - 1 and x >= 0:
-            known_rectangles[y][x+1].setFill("yellow")
+        available_placement(cord1, board, known_rectangles)
 
         #Get direction
         point = win.getMouse()
@@ -130,15 +136,7 @@ def player_placement(board, win, known_rectangles):
             x = int(x  // delta_width)
             y = int(y  // delta_length)
             cord1 = (x,y)
-            known_rectangles[y][x].setFill("grey")
-            if x != 0:
-                known_rectangles[y][x-1].setFill("yellow")
-            if y != 0:
-                known_rectangles[y-1][x].setFill("yellow")
-            if y < board.length - 1 and y >= 0:
-                known_rectangles[y+1][x].setFill("yellow")
-            if x < board.width - 1 and x >= 0:
-                known_rectangles[y][x+1].setFill("yellow")
+            available_placement(cord1, board, known_rectangles)
 
             #Get direction
             point = win.getMouse()
@@ -328,8 +326,10 @@ def play_game():
             if cord not in player_guess_board.cords_shot_at:
                 player_turn(player_guess_board, bot_hidden_board, guess_rectangles, cord)
                 player_cords_shot_at.append(cord)
-                turn += 1
-                print("turn over")
+                x,y = cord
+                if bot_hidden_board.board[y][x] == "M":
+                    turn += 1
+                    print("turn over")
             else:
                 print("You've already fired at that location")
             time.sleep(1.5)
@@ -342,7 +342,8 @@ def play_game():
             print("Your board\n")
             show_board(player_hidden_board.board)
             possible_cords = possible_cords[1:]
-            turn += 1
+            if player_hidden_board.board[y][x] == "M":
+                    turn += 1
     if player_hidden_board.hp <= 0:
         print("The AI sunk all your ships, you lost")
     elif bot_hidden_board.hp <= 0: 
