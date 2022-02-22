@@ -68,18 +68,30 @@ def bot_placement(board):
         ship.direction = direction
         board.place_ship(ship, (x,y))
 #-----------------------------------------------------------------------------
-def available_placement(cord, board, known_rectangles):
+def available_placement(cord, board, known_rectangles, ship):
     x = cord[0]
     y = cord[1]
     known_rectangles[y][x].setFill("grey")
-    if x != 0:
-        known_rectangles[y][x-1].setFill("yellow")
-    if y != 0:
-        known_rectangles[y-1][x].setFill("yellow")
-    if y < board.length - 1 and y >= 0:
-        known_rectangles[y+1][x].setFill("yellow")
-    if x < board.width - 1 and x >= 0:
-        known_rectangles[y][x+1].setFill("yellow")
+
+    ship.direction = "West"
+    if x != 0 and board.legal_placement(ship, (x,y)):
+        for i in range(ship.size-1):
+            known_rectangles[y][x-1-i].setFill("yellow")
+    
+    ship.direction = "North"
+    if y != 0 and board.legal_placement(ship, (x,y)):
+        for i in range(ship.size-1):
+            known_rectangles[y-1-i][x].setFill("yellow")
+
+    ship.direction = "South"
+    if y < board.length - 1 and y >= 0 and board.legal_placement(ship, (x,y)):
+        for i in range(ship.size-1):
+            known_rectangles[y+1+i][x].setFill("yellow")
+
+    ship.direction = "East"
+    if x < board.width - 1 and x >= 0 and board.legal_placement(ship, (x,y)):
+        for i in range(ship.size-1):
+            known_rectangles[y][x+1+i].setFill("yellow")
 #-----------------------------------------------------------------------------
 def player_placement(board, win, known_rectangles):
     carrier = Ship(5, "North", "carrier")
@@ -104,7 +116,7 @@ def player_placement(board, win, known_rectangles):
         x = int(x  // delta_width)
         y = int(y  // delta_length)
         cord1 = (x,y)
-        available_placement(cord1, board, known_rectangles)
+        available_placement(cord1, board, known_rectangles, ship)
 
         #Get direction
         point = win.getMouse()
@@ -136,7 +148,7 @@ def player_placement(board, win, known_rectangles):
             x = int(x  // delta_width)
             y = int(y  // delta_length)
             cord1 = (x,y)
-            available_placement(cord1, board, known_rectangles)
+            available_placement(cord1, board, known_rectangles, ship)
 
             #Get direction
             point = win.getMouse()
