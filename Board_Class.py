@@ -26,12 +26,12 @@ class Board:
             return False
         if x >= self.width or y >= self.length:
             return False
-        a,b = dir
+        delta_x,delta_y = dir
         if self.board[y][x] == '1':
             return False
         for i in range(ship.size-1):
-            y += b
-            x += a
+            y += delta_y
+            x += delta_x
             if x < 0 or y < 0:
                 return False
             if x >= self.width or y >= self.length:
