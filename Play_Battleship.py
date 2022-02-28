@@ -4,6 +4,8 @@ from Ship_Class import *
 import random
 from graphics import *
 import time
+from Bot_Class import *
+import Helpers as help
 
 #-----------------------------Constants---------------------------------------
 player_hidden_board = Board(10,10)
@@ -45,14 +47,14 @@ def fire(cor, board):
         return False
 #-----------------------------------------------------------------------------
 #take ship length
-def direction_list(board):
+def direction_list(Board):
     direction_list = ["North", "South", "East", "West"]
     direction = random.choice(direction_list)
-    x = random.randrange(0, board.width)
-    y = random.randrange(0, board.length)
+    x = random.randrange(0, Board.width)
+    y = random.randrange(0, Board.length)
     return [direction, x, y]
 #-----------------------------------------------------------------------------
-def bot_placement(board):
+def bot_placement(Board):
     carrier = Ship(5, "North", "carrier")
     battleship = Ship(4, "North", "battleship")
     submarine = Ship(3, "North", "submarine")
@@ -60,13 +62,13 @@ def bot_placement(board):
     cruiser = Ship(2, "North", "curiser")
     ship_list = [carrier, battleship, submarine, destroyer, cruiser]
     for ship in ship_list:
-        direction, x, y = direction_list(board)
+        direction, x, y = direction_list(Board)
         ship.direction = direction
-        while board.legal_placement(ship, (x,y)) == False:
-            direction, x, y = direction_list(board)
+        while Board.legal_placement(ship, (x,y)) == False:
+            direction, x, y = direction_list(Board)
             ship.direction = direction
         ship.direction = direction
-        board.place_ship(ship, (x,y))
+        Board.place_ship(ship, (x,y))
 #-----------------------------------------------------------------------------
 def available_placement(cord, board, known_rectangles, ship):
     x = cord[0]
@@ -294,7 +296,8 @@ def play_game():
         p1 = Point(x,y)
         p2 = Point(x + delta_width, y + delta_length)
 
-    bot_placement(bot_hidden_board)
+    bot = Bot()
+    bot.bot_placement(bot_hidden_board)
 
     player_placement(player_hidden_board, known_board, known_rectangles)
 
@@ -350,7 +353,7 @@ def play_game():
             print("The bots turn\n")
             x,y = possible_cords[0]
             print("The bot fired at {letter}{number}".format(letter = chr(y+65), number = x+1))
-            bot_turn(bot_guess_board, player_hidden_board,known_rectangles, possible_cords)
+            bot.bot_turn(bot_guess_board, player_hidden_board,known_rectangles, possible_cords)
             print("Your board\n")
             show_board(player_hidden_board.board)
             possible_cords = possible_cords[1:]
