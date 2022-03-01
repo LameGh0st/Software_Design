@@ -16,84 +16,11 @@ bot_guess_board = Board(10,10)
 length = 500
 width = 500
 offset = 50
+tx = 1.0
 
 delta_width = ((width - 2 * offset) / bot_hidden_board.width) 
 delta_length = ((length - 2 * offset) / bot_hidden_board.length) 
-#-----------------------------------------------------------------------------
-def get_board_values(board):
-    sum = 0
-    for i in range(len(board)):
-        for j in board[i]:
-            sum += int(j)
-    return sum
-#-----------------------------------------------------------------------------
-def show_board(board):
-    letters = []
-    nums = []
-    for i in range(len(board)):
-        letters.append(chr(65+i))
-    for i in range(len(board)):
-        print(letters[i], board[i])
-        print('')
-    for i in range(len(board[0])):
-        nums.append(str(i+1))
-    print(' ', nums)
-#-----------------------------------------------------------------------------
-def fire(cor, board):
-    x,y = cor
-    if board.board[y][x] == '1':
-        return True
-    else:
-        return False
-#-----------------------------------------------------------------------------
-#take ship length
-def direction_list(Board):
-    direction_list = ["North", "South", "East", "West"]
-    direction = random.choice(direction_list)
-    x = random.randrange(0, Board.width)
-    y = random.randrange(0, Board.length)
-    return [direction, x, y]
-#-----------------------------------------------------------------------------
-def bot_placement(Board):
-    carrier = Ship(5, "North", "carrier")
-    battleship = Ship(4, "North", "battleship")
-    submarine = Ship(3, "North", "submarine")
-    destroyer = Ship(3, "North", "destroyer")
-    cruiser = Ship(2, "North", "curiser")
-    ship_list = [carrier, battleship, submarine, destroyer, cruiser]
-    for ship in ship_list:
-        direction, x, y = direction_list(Board)
-        ship.direction = direction
-        while Board.legal_placement(ship, (x,y)) == False:
-            direction, x, y = direction_list(Board)
-            ship.direction = direction
-        ship.direction = direction
-        Board.place_ship(ship, (x,y))
-#-----------------------------------------------------------------------------
-def available_placement(cord, board, known_rectangles, ship):
-    x = cord[0]
-    y = cord[1]
-    known_rectangles[y][x].setFill("grey")
 
-    ship.direction = "West"
-    if x != 0 and board.legal_placement(ship, (x,y)):
-        for i in range(ship.size-1):
-            known_rectangles[y][x-1-i].setFill("yellow")
-    
-    ship.direction = "North"
-    if y != 0 and board.legal_placement(ship, (x,y)):
-        for i in range(ship.size-1):
-            known_rectangles[y-1-i][x].setFill("yellow")
-
-    ship.direction = "South"
-    if y < board.length - 1 and y >= 0 and board.legal_placement(ship, (x,y)):
-        for i in range(ship.size-1):
-            known_rectangles[y+1+i][x].setFill("yellow")
-
-    ship.direction = "East"
-    if x < board.width - 1 and x >= 0 and board.legal_placement(ship, (x,y)):
-        for i in range(ship.size-1):
-            known_rectangles[y][x+1+i].setFill("yellow")
 #-----------------------------------------------------------------------------
 def player_placement(board, win, known_rectangles):
     carrier = Ship(5, "North", "carrier")
@@ -107,7 +34,7 @@ def player_placement(board, win, known_rectangles):
                     (1,0): "East",
                     (-1,0): "West"}
     for ship in ship_list:
-        show_board(board.board)
+        help.show_board(board.board)
         # Get Cord
         point = win.getMouse()
         while (point.getX() <= offset or point.getX() >= width - offset
@@ -118,7 +45,7 @@ def player_placement(board, win, known_rectangles):
         x = int(x  // delta_width)
         y = int(y  // delta_length)
         cord1 = (x,y)
-        available_placement(cord1, board, known_rectangles, ship)
+        help.available_placement(cord1, board, known_rectangles, ship)
 
         #Get direction
         point = win.getMouse()
@@ -138,7 +65,7 @@ def player_placement(board, win, known_rectangles):
 
         ship.direction = direction
         while board.legal_placement(ship, cord1) == False:
-            show_ships(board, known_rectangles)
+            help.show_ships(board, known_rectangles)
 
             print("Cannot place a ship there")
             point = win.getMouse()
@@ -150,7 +77,7 @@ def player_placement(board, win, known_rectangles):
             x = int(x  // delta_width)
             y = int(y  // delta_length)
             cord1 = (x,y)
-            available_placement(cord1, board, known_rectangles, ship)
+            help.available_placement(cord1, board, known_rectangles, ship)
 
             #Get direction
             point = win.getMouse()
@@ -168,43 +95,14 @@ def player_placement(board, win, known_rectangles):
 
         ship.direction = direction
         board.place_ship(ship, cord1)
-        show_ships(board, known_rectangles)
+        help.show_ships(board, known_rectangles)
 
-    show_board(board.board)
-#-----------------------------------------------------------------------------
-def bot_turn(bot_guess_board, player_hidden_board, board_of_rectangles, cords):
-    cord = cords[0] 
-    x,y = cord
-    if fire(cord, player_hidden_board):
-        bot_guess_board.board[y][x] = 'X'
-        player_hidden_board.board[y][x] = 'X'
-        board_of_rectangles[y][x].setFill('red')
-        bot_guess_board.cords_shot_at.append(cord)
-        for ship in player_hidden_board.ships_on_board:
-            if (x,y) in ship.ship_cords:
-                ship.hp -= 1
-                if ship.hp == 0:
-                    print("Hit!")
-                    print("The AI sunk a ship!")
-                    for i in ship.ship_cords:
-                        x,y = i
-                        board_of_rectangles[y][x].setFill('black')
-                else:
-                    print("Hit!")
-        player_hidden_board.hp -= 1
-        show_board(bot_guess_board.board)
-    else:
-        bot_guess_board.board[y][x] = 'M'
-        player_hidden_board.board[y][x] = 'M'
-        board_of_rectangles[y][x].setFill('white')
-        bot_guess_board.cords_shot_at.append(cord)
-        print('Miss')
-        show_board(bot_guess_board.board)
+    help.show_board(board.board)
 #-----------------------------------------------------------------------------
 def player_turn(player_guess_board, bot_hidden_board, board_of_rectangles, cord):
     player_guess_board.cords_shot_at.append(cord)
     x,y = cord
-    if fire(cord, bot_hidden_board):
+    if help.fire(cord, bot_hidden_board):
         bot_hidden_board.board[y][x] = "X"
         player_guess_board.board[y][x] = 'X'
         board_of_rectangles[y][x].setFill('red')
@@ -220,21 +118,13 @@ def player_turn(player_guess_board, bot_hidden_board, board_of_rectangles, cord)
                 else:
                     print("Hit!")
         bot_hidden_board.hp -= 1
-        show_board(player_guess_board.board)
+        help.show_board(player_guess_board.board)
     else:
         bot_hidden_board.board[y][x] = "M"
         player_guess_board.board[y][x] = 'M'
         board_of_rectangles[y][x].setFill('white')
         print("Miss!")
-        show_board(player_guess_board.board)
-#-------------------------------------------------------------------------------
-def show_ships(board, known_rectangles):
-        for i in range(board.length):
-            for j in range(board.width):
-                if board.board[i][j] == '1':
-                    known_rectangles[i][j].setFill("grey")
-                if board.board[i][j] == '0':
-                    known_rectangles[i][j].setFill("blue")
+        help.show_board(player_guess_board.board)
 #-----------------------------------------------------------------------------
 def play_game():
 
@@ -306,7 +196,7 @@ def play_game():
             if player_hidden_board.board[i][j] == '1':
                 known_rectangles[i][j].setFill("grey")
 
-    show_board(bot_hidden_board.board)
+    help.show_board(bot_hidden_board.board)
 
     player_cords_shot_at = []
     possible_cords = []
@@ -314,8 +204,8 @@ def play_game():
             for j in range(bot_guess_board.width):
                 possible_cords.append((j, i))
 
-    player_hidden_board.hp = get_board_values(player_hidden_board.board)
-    bot_hidden_board.hp = get_board_values(bot_hidden_board.board)
+    player_hidden_board.hp = help.get_board_values(player_hidden_board.board)
+    bot_hidden_board.hp = help.get_board_values(bot_hidden_board.board)
     rand.shuffle(possible_cords)
 
 
@@ -326,7 +216,7 @@ def play_game():
         #Player Turn
         if turn % 2 == 0:
             print("Your turn\n")
-            show_board(player_guess_board.board)
+            help.show_board(player_guess_board.board)
             print("Click a spot to fire at!\n")
             point = guess_board.getMouse()
             while (point.getX() <= offset or point.getX() >= width - offset
@@ -347,16 +237,21 @@ def play_game():
                     print("turn over")
             else:
                 print("You've already fired at that location")
-            time.sleep(1.5)
+            time.sleep(tx)
         #Bot Turn
         else:
             print("The bots turn\n")
             x,y = possible_cords[0]
             print("The bot fired at {letter}{number}".format(letter = chr(y+65), number = x+1))
-            bot.bot_turn(bot_guess_board, player_hidden_board,known_rectangles, possible_cords)
+            if not bot.destroy_mode:
+                bot.search(bot_guess_board, player_hidden_board,known_rectangles, possible_cords)
+                cord = possible_cords[0]
+            else:
+                bot.destroy(bot_guess_board, player_hidden_board,known_rectangles, cord)
             print("Your board\n")
-            show_board(player_hidden_board.board)
+            help.show_board(player_hidden_board.board)
             possible_cords = possible_cords[1:]
+            time.sleep(tx)
             if player_hidden_board.board[y][x] == "M":
                     turn += 1
     if player_hidden_board.hp <= 0:

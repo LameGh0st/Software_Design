@@ -4,7 +4,6 @@ import Helpers as help
 
 class Bot:
     def __init__(self):
-        self.search_mode = True
         self.destroy_mode = False
 #------------------------------------------------------------------------------
     def bot_placement(self, Board):
@@ -23,10 +22,11 @@ class Bot:
             ship.direction = direction
             Board.place_ship(ship, (x,y))
 #------------------------------------------------------------------------------
-    def bot_turn(self, bot_guess_board, player_hidden_board, board_of_rectangles, cords):
+    def search(self, bot_guess_board, player_hidden_board, board_of_rectangles, cords):
         cord = cords[0] 
         x,y = cord
         if help.fire(cord, player_hidden_board):
+            self.destroy_mode = True
             bot_guess_board.board[y][x] = 'X'
             player_hidden_board.board[y][x] = 'X'
             board_of_rectangles[y][x].setFill('red')
@@ -45,6 +45,39 @@ class Bot:
             player_hidden_board.hp -= 1
             help.show_board(bot_guess_board.board)
         else:
+            bot_guess_board.board[y][x] = 'M'
+            player_hidden_board.board[y][x] = 'M'
+            board_of_rectangles[y][x].setFill('white')
+            bot_guess_board.cords_shot_at.append(cord)
+            print('Miss')
+            help.show_board(bot_guess_board.board)
+#------------------------------------------------------------------------------
+    def destroy(self, bot_guess_board, player_hidden_board, board_of_rectangles, cord):
+        dir_list = [(0,-1),(0,1),(1,0),(0,1)]
+        dir = random.choice(dir_list)
+        dx,dy = dir
+        x,y = cord
+        new_cord = (x+dx,y+dy)
+        if help.fire(new_cord, player_hidden_board):
+            bot_guess_board.board[y][x] = 'X'
+            player_hidden_board.board[y][x] = 'X'
+            board_of_rectangles[y][x].setFill('red')
+            bot_guess_board.cords_shot_at.append(cord)
+            for ship in player_hidden_board.ships_on_board:
+                if (x,y) in ship.ship_cords:
+                    ship.hp -= 1
+                    if ship.hp == 0:
+                        print("Hit!")
+                        print("The AI sunk a ship!")
+                        for i in ship.ship_cords:
+                            x,y = i
+                            board_of_rectangles[y][x].setFill('black')
+                    else:
+                        print("Hit!")
+            player_hidden_board.hp -= 1
+            help.show_board(bot_guess_board.board)
+        else:
+            self.destroy = False
             bot_guess_board.board[y][x] = 'M'
             player_hidden_board.board[y][x] = 'M'
             board_of_rectangles[y][x].setFill('white')

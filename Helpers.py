@@ -1,4 +1,5 @@
 import random
+from graphics import *
 
 
 #-----------------------------------------------------------------------------
@@ -9,7 +10,6 @@ def fire(cor, board):
     else:
         return False
 #-----------------------------------------------------------------------------
-#take ship length
 def direction_list(Board):
     direction_list = ["North", "South", "East", "West"]
     direction = random.choice(direction_list)
@@ -36,4 +36,35 @@ def get_board_values(board):
             sum += int(j)
     return sum
 #-----------------------------------------------------------------------------
+def available_placement(cord, board, known_rectangles, ship):
+    x = cord[0]
+    y = cord[1]
+    known_rectangles[y][x].setFill("grey")
 
+    ship.direction = "West"
+    if x != 0 and board.legal_placement(ship, (x,y)):
+        for i in range(ship.size-1):
+            known_rectangles[y][x-1-i].setFill("yellow")
+    
+    ship.direction = "North"
+    if y != 0 and board.legal_placement(ship, (x,y)):
+        for i in range(ship.size-1):
+            known_rectangles[y-1-i][x].setFill("yellow")
+
+    ship.direction = "South"
+    if y < board.length - 1 and y >= 0 and board.legal_placement(ship, (x,y)):
+        for i in range(ship.size-1):
+            known_rectangles[y+1+i][x].setFill("yellow")
+
+    ship.direction = "East"
+    if x < board.width - 1 and x >= 0 and board.legal_placement(ship, (x,y)):
+        for i in range(ship.size-1):
+            known_rectangles[y][x+1+i].setFill("yellow")
+#-------------------------------------------------------------------------------
+def show_ships(board, known_rectangles):
+        for i in range(board.length):
+            for j in range(board.width):
+                if board.board[i][j] == '1':
+                    known_rectangles[i][j].setFill("grey")
+                if board.board[i][j] == '0':
+                    known_rectangles[i][j].setFill("blue")
