@@ -1,5 +1,6 @@
 import random
 from graphics import *
+from pip import main
 
 
 #-----------------------------------------------------------------------------
@@ -68,3 +69,22 @@ def show_ships(board, known_rectangles):
                     known_rectangles[i][j].setFill("grey")
                 if board.board[i][j] == '0':
                     known_rectangles[i][j].setFill("blue")
+#-------------------------------------------------------------------------------
+def legal_shot(Board, cord):
+    x,y = cord
+    if x < 0:
+        return False
+    if y < 0:
+        return False
+    if x >= Board.width:
+        return False
+    if y >= Board.length:
+        return False
+    if Board.board[y][x] != '0':
+        return False
+    if (x,y) in Board.cords_shot_at:
+        return False
+    else:
+        return True
+
+

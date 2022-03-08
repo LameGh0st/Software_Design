@@ -16,7 +16,7 @@ bot_guess_board = Board(10,10)
 length = 500
 width = 500
 offset = 50
-tx = 1.0
+tx = .5
 
 delta_width = ((width - 2 * offset) / bot_hidden_board.width) 
 delta_length = ((length - 2 * offset) / bot_hidden_board.length) 
@@ -241,18 +241,22 @@ def play_game():
         #Bot Turn
         else:
             print("The bots turn\n")
-            x,y = possible_cords[0]
-            print("The bot fired at {letter}{number}".format(letter = chr(y+65), number = x+1))
+            print(bot.destroy_mode)
+            print(bot.direction)
             if not bot.destroy_mode:
+                print('search')
+                x,y = possible_cords[0]
+                print("The bot fired at {letter}{number}".format(letter = chr(y+65), number = x+1))
                 bot.search(bot_guess_board, player_hidden_board,known_rectangles, possible_cords)
-                cord = possible_cords[0]
             else:
-                bot.destroy(bot_guess_board, player_hidden_board,known_rectangles, cord)
+                print('destroy')
+                bot.destroy(bot_guess_board, player_hidden_board,known_rectangles, possible_cords)
+                x,y = bot.last_shot
+                print("The bot fired at {letter}{number}".format(letter = chr(y+65), number = x+1))
             print("Your board\n")
             help.show_board(player_hidden_board.board)
-            possible_cords = possible_cords[1:]
             time.sleep(tx)
-            if player_hidden_board.board[y][x] == "M":
+            if player_hidden_board.board[y][x] == "M" :
                     turn += 1
     if player_hidden_board.hp <= 0:
         print("The AI sunk all your ships, you lost")
