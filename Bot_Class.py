@@ -9,10 +9,8 @@ class Bot:
         self.first_known_hit = None
         self.last_known_hit = None
         self.direction = None
-        self.direction2 = None
         self.last_shot = None
-        self.reset = False
-        self.reset_direction = False
+
         
 #------------------------------------------------------------------------------
     def bot_placement(self, Board):
@@ -67,7 +65,6 @@ class Bot:
             help.show_board(bot_guess_board.board)
 #------------------------------------------------------------------------------
     def destroy(self, bot_guess_board, player_hidden_board, board_of_rectangles, cords):
-        #"""
         dir_list = [(0,-1),(0,1),(1,0),(-1,0)]
         random.shuffle(dir_list)
         if self.direction == None:
@@ -134,16 +131,4 @@ class Bot:
             bot_guess_board.cords_shot_at.append(new_cord)
             print('Miss')
             help.show_board(bot_guess_board.board)
-        """
-        dir_list = [(0,-1),(0,1),(1,0),(-1,0)]
-        if self.direction == None:
-            self.direction = dir_list
-        if len(self.direction) == 0:
-            self.destroy_mode = False
-            self.first_known_hit = None
-            self.last_known_hit = None
-            self.direction = None
-            self.last_shot = None
-            self.search(bot_guess_board, player_hidden_board, board_of_rectangles, cords)
-            return None
-        """
+        
