@@ -227,7 +227,6 @@ def play_game():
             x = int(x  // delta_width)
             y = int(y  // delta_length)
             cord = (x,y)
-            print(cord)
             if cord not in player_guess_board.cords_shot_at:
                 player_turn(player_guess_board, bot_hidden_board, guess_rectangles, cord)
                 player_cords_shot_at.append(cord)
@@ -241,15 +240,11 @@ def play_game():
         #Bot Turn
         else:
             print("The bots turn\n")
-            print(bot.destroy_mode)
-            print(bot.direction)
             if not bot.destroy_mode:
-                print('search')
                 x,y = possible_cords[0]
                 print("The bot fired at {letter}{number}".format(letter = chr(y+65), number = x+1))
                 bot.search(bot_guess_board, player_hidden_board,known_rectangles, possible_cords)
             else:
-                print('destroy')
                 bot.destroy(bot_guess_board, player_hidden_board,known_rectangles, possible_cords)
                 x,y = bot.last_shot
                 print("The bot fired at {letter}{number}".format(letter = chr(y+65), number = x+1))
