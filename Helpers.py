@@ -1,7 +1,7 @@
 import random
 from graphics import *
 from pip import main
-
+ 
 
 #-----------------------------------------------------------------------------
 def fire(cor, board):
