@@ -1,9 +1,7 @@
 from matplotlib.style import available
 from Board_Class import *
 from Ship_Class import *
-import random
 from graphics import *
-import time
 import Helpers as help
 import Constants as cons
 

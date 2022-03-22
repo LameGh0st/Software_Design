@@ -1,7 +1,6 @@
 from matplotlib.style import available
 from Board_Class import *
 from Ship_Class import *
-import random
 from graphics import *
 import time
 from Bot_Class import *
@@ -96,7 +95,7 @@ def play_game():
 
 
 
-# Start of Turn
+# Start of Game
     turn = 0
     while 0 < cons.player_hidden_board.hp and 0 < cons.bot_hidden_board.hp:
         #Player Turn
@@ -145,7 +144,6 @@ def play_game():
         print("Congrats you win!\nYou sunk all of the enemy ships")
 
 #-----------------------------------------------------------------------------
-
 
 if __name__ == '__main__':
     play_game()

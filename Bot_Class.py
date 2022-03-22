@@ -10,9 +10,7 @@ class Bot:
         self.last_known_hit = None
         self.direction = None
         self.last_shot = None
-        self.known_hits = []
-
-        
+        self.known_hits = []       
 #------------------------------------------------------------------------------
     def bot_placement(self, Board):
         carrier = Ship(5, "North", "carrier")
