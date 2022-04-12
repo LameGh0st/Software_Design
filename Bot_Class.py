@@ -45,6 +45,12 @@ class Bot(AbstractPlayer):
         else:
             return self.search()
 #------------------------------------------------------------------------------
+    def process(self, cord, result):
+        return super().process(cord, result)
+#------------------------------------------------------------------------------
+    def lookup(self, cord):
+        return super().lookup(cord)
+#------------------------------------------------------------------------------
     def search(self):
         print('search')
         cord = self.possible_cords[0] 

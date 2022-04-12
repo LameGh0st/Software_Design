@@ -95,14 +95,30 @@ def play_game():
 
 
 # Start of Game
-    player_number = 0 #random.choice([0,1])
+    player_number = random.choice([0,1])
     while 0 < players[0].hidden_board.hp and 0 < players[1].hidden_board.hp:
         player = players[player_number]
+        other_player = players[1-player_number]
         guess_board = guess_boards[player_number]
         hidden_board = hidden_boards[1-player_number]
         win_board = win_boards[player_number]
-        cord = player.move(win_board)
         win_rec = rectangles[player_number]
+
+        #player makes their move
+        cord = player.move(win_board)
+
+        #Give move to other player to get hit/miss/sink
+        #result = players[1-player_number].lookup(cord)
+        
+        #update guess board and any other variables
+        #player.process(cord, result)
+
+        #update graphics
+        #help.update_graphics(cord, result, other_player.hidden_board, win_rec)
+
+        #if result == "Miss":
+            #player_number = 1 - player_number
+
         if cord not in guess_board.cords_shot_at:
             guess_board.cords_shot_at.append(cord)
             x,y = cord
@@ -134,9 +150,9 @@ def play_game():
         else:
             print("You've already fired at that location")
     
-    if cons.player_hidden_board.hp <= 0:
+    if players[1].hidden_board.hp <= 0:
         print("The AI sunk all your ships, you lost")
-    elif cons.bot_hidden_board.hp <= 0: 
+    elif players[0].hidden_board.hp <= 0: 
         print("Congrats you win!\nYou sunk all of the enemy ships")
 
 #-----------------------------------------------------------------------------

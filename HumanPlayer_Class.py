@@ -104,3 +104,12 @@ class HumanPlayer(AbstractPlayer):
         cord = (x,y)
         return cord
 #-----------------------------------------------------------------------------
+    def process(self, cord, result):
+        x,y = cord
+        if result == 'Miss':
+            self.guess_board.board[y][x] = 'M'
+        if result == 'Hit' or result == 'Sunk':
+            self.guess_board.board[y][x] = 'X'
+#-----------------------------------------------------------------------------
+    def lookup(self, cord):
+        return super().lookup(cord)

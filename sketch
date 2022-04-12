@@ -28,4 +28,16 @@
             else:
                 player1 wins
                 player2 loses
+
+
+
+                bot():
+                def lookup(cord):
+                    check if cord was a hit, miss, or sink on hidden board
+                    update own hidden board
+                    return to game manager hit, miss, or sink
+
+                def process(cord, result):
+                    update own guess board
+                    
     """
