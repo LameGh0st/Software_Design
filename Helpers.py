@@ -86,5 +86,4 @@ def legal_shot(Board, cord):
         return False
     else:
         return True
-
-
+#------------------------------------------------------------------------------

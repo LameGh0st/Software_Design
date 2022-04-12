@@ -4,13 +4,15 @@ from Ship_Class import *
 from graphics import *
 import Helpers as help
 import Constants as cons
+from AbstractPlayer import AbstractPlayer
 
-class Player:
+class HumanPlayer(AbstractPlayer):
 
     def __init__(self):
-        pass
+        self.hidden_board = Board(10,10)
+        self.guess_board = Board(10,10)
 #-----------------------------------------------------------------------------
-    def player_placement(self, board, win, known_rectangles):
+    def placement(self, win, known_rectangles):
         carrier = Ship(5, "North", "carrier")
         battleship = Ship(4, "North", "battleship")
         submarine = Ship(3, "North", "submarine")
@@ -22,7 +24,7 @@ class Player:
                         (1,0): "East",
                         (-1,0): "West"}
         for ship in ship_list:
-            help.show_board(board.board)
+            help.show_board(self.hidden_board.board)
             # Get Cord
             point = win.getMouse()
             while (point.getX() <= cons.offset or point.getX() >= cons.width - cons.offset
@@ -33,7 +35,7 @@ class Player:
             x = int(x  // cons.delta_width)
             y = int(y  // cons.delta_length)
             cord1 = (x,y)
-            help.available_placement(cord1, board, known_rectangles, ship)
+            help.available_placement(cord1, self.hidden_board, known_rectangles, ship)
 
             #Get direction
             point = win.getMouse()
@@ -52,8 +54,8 @@ class Player:
             direction = direction_list[direction]
 
             ship.direction = direction
-            while board.legal_placement(ship, cord1) == False:
-                help.show_ships(board, known_rectangles)
+            while self.hidden_board.legal_placement(ship, cord1) == False:
+                help.show_ships(self.hidden_board, known_rectangles)
 
                 print("Cannot place a ship there")
                 point = win.getMouse()
@@ -65,7 +67,7 @@ class Player:
                 x = int(x  // cons.delta_width)
                 y = int(y  // cons.delta_length)
                 cord1 = (x,y)
-                help.available_placement(cord1, board, known_rectangles, ship)
+                help.available_placement(cord1, self.hidden_board, known_rectangles, ship)
 
                 #Get direction
                 point = win.getMouse()
@@ -82,34 +84,23 @@ class Player:
 
 
             ship.direction = direction
-            board.place_ship(ship, cord1)
-            help.show_ships(board, known_rectangles)
+            self.hidden_board.place_ship(ship, cord1)
+            help.show_ships(self.hidden_board, known_rectangles)
 
-        help.show_board(board.board)
+        help.show_board(self.hidden_board.board)
 #-----------------------------------------------------------------------------
-    def player_turn(self, player_guess_board, bot_hidden_board, board_of_rectangles, cord):
-        player_guess_board.cords_shot_at.append(cord)
-        x,y = cord
-        if help.fire(cord, bot_hidden_board):
-            bot_hidden_board.board[y][x] = "X"
-            player_guess_board.board[y][x] = 'X'
-            board_of_rectangles[y][x].setFill('red')
-            for ship in bot_hidden_board.ships_on_board:
-                if (x,y) in ship.ship_cords:
-                    ship.hp -= 1
-                    if ship.hp == 0:
-                        print("Hit!")
-                        print("You sunk a {name}".format(name = ship.name))
-                        for i in ship.ship_cords:
-                            x,y = i
-                            board_of_rectangles[y][x].setFill('black')
-                    else:
-                        print("Hit!")
-            bot_hidden_board.hp -= 1
-            help.show_board(player_guess_board.board)
-        else:
-            bot_hidden_board.board[y][x] = "M"
-            player_guess_board.board[y][x] = 'M'
-            board_of_rectangles[y][x].setFill('white')
-            print("Miss!")
-            help.show_board(player_guess_board.board)
+    def move(self, win_guess_board):
+        print("Your turn\n")
+        help.show_board(cons.player_guess_board.board)
+        print("Click a spot to fire at!\n")
+        point = win_guess_board.getMouse()
+        while (point.getX() <= cons.offset or point.getX() >= cons.width - cons.offset
+            or point.getY() <= cons.offset or point.getY() >= cons.length - cons.offset):
+            point = win_guess_board.getMouse()
+        x = point.getX() - cons.offset
+        y = point.getY() - cons.offset
+        x = int(x  // cons.delta_width)
+        y = int(y  // cons.delta_length)
+        cord = (x,y)
+        return cord
+#-----------------------------------------------------------------------------

@@ -1,18 +1,29 @@
 from logging import NullHandler
 import random
 from Ship_Class import *
+from Board_Class import *
 import Helpers as help
+import Constants as cons
+from AbstractPlayer import AbstractPlayer
 
-class Bot:
+class Bot(AbstractPlayer):
     def __init__(self):
+        self.hidden_board = Board(10,10)
+        self.guess_board = Board(10,10)
         self.destroy_mode = False
         self.first_known_hit = None
         self.last_known_hit = None
         self.direction = None
         self.last_shot = None
-        self.known_hits = []       
+        self.known_hits = []
+        self.possible_cords = []
+        for i in range(cons.bot_guess_board.length):
+                for j in range(cons.bot_guess_board.width):
+                    self.possible_cords.append((j, i))
+        random.shuffle(self.possible_cords)
+
 #------------------------------------------------------------------------------
-    def bot_placement(self, Board):
+    def placement(self):
         carrier = Ship(5, "North", "carrier")
         battleship = Ship(4, "North", "battleship")
         submarine = Ship(3, "North", "submarine")
@@ -20,50 +31,27 @@ class Bot:
         cruiser = Ship(2, "North", "curiser")
         ship_list = [carrier, battleship, submarine, destroyer, cruiser]
         for ship in ship_list:
-            direction, x, y = help.direction_list(Board)
+            direction, x, y = help.direction_list(self.hidden_board)
             ship.direction = direction
-            while Board.legal_placement(ship, (x,y)) == False:
-                direction, x, y = help.direction_list(Board)
+            while self.hidden_board.legal_placement(ship, (x,y)) == False:
+                direction, x, y = help.direction_list(self.hidden_board)
                 ship.direction = direction
             ship.direction = direction
-            Board.place_ship(ship, (x,y))
+            self.hidden_board.place_ship(ship, (x,y))
 #------------------------------------------------------------------------------
-    def search(self, bot_guess_board, player_hidden_board, board_of_rectangles, cords):
-        print('search')
-        cord = cords[0] 
-        x,y = cord
-        cords.remove(cord)
-        if help.fire(cord, player_hidden_board):
-            self.last_shot = cord
-            self.destroy_mode = True
-            self.last_known_hit = cord
-            self.known_hits.append(cord)
-            self.first_known_hit = cord
-            bot_guess_board.board[y][x] = 'X'
-            player_hidden_board.board[y][x] = 'X'
-            board_of_rectangles[y][x].setFill('red')
-            bot_guess_board.cords_shot_at.append(cord)
-            for ship in player_hidden_board.ships_on_board:
-                if (x,y) in ship.ship_cords:
-                    ship.hp -= 1
-                    if ship.hp == 0:
-                        print("Hit!")
-                        print("The AI sunk a ship!")
-                        for i in ship.ship_cords:
-                            x,y = i
-                            board_of_rectangles[y][x].setFill('black')
-                    else:
-                        print("Hit!")
-            player_hidden_board.hp -= 1
-            #help.show_board(bot_guess_board.board)
+    def move(self, win_board):
+        if self.destroy_mode:
+            return self.destroy()
         else:
-            self.last_shot = cord
-            bot_guess_board.board[y][x] = 'M'
-            player_hidden_board.board[y][x] = 'M'
-            board_of_rectangles[y][x].setFill('white')
-            bot_guess_board.cords_shot_at.append(cord)
-            print('Miss')
-            #help.show_board(bot_guess_board.board)
+            return self.search()
+#------------------------------------------------------------------------------
+    def search(self):
+        print('search')
+        cord = self.possible_cords[0] 
+        x,y = cord
+        self.possible_cords.remove(cord)
+        return cord
+
 #------------------------------------------------------------------------------
     def destroy(self, bot_guess_board, player_hidden_board, board_of_rectangles, cords):
         print('destroy')
