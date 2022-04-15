@@ -108,7 +108,7 @@ def play_game():
         cord = player.move(win_board)
 
         #Give move to other player to get hit/miss/sink
-        #result = players[1-player_number].lookup(cord)
+        #result = other_player.lookup(cord)
         
         #update guess board and any other variables
         #player.process(cord, result)
