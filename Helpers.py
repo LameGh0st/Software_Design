@@ -4,9 +4,9 @@ from pip import main
  
 
 #-----------------------------------------------------------------------------
-def fire(cor, board):
+def fire(cor, Board):
     x,y = cor
-    if board.board[y][x] == '1':
+    if Board.board[y][x] == '1':
         return True
     else:
         return False

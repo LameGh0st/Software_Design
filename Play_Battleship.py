@@ -81,26 +81,17 @@ def play_game():
 
     help.show_board(cons.bot_hidden_board.board)
 
-
     players = [bot, human]
-    guess_boards = [bot.guess_board, human.guess_board]
     win_boards = [win_known_board, win_guess_board]
-    hidden_boards = [bot.hidden_board, human.hidden_board]
     rectangles = [known_rectangles, guess_rectangles]
     players[0].hidden_board.hp = help.get_board_values(human.hidden_board.board)
     players[1].hidden_board.hp = help.get_board_values(bot.hidden_board.board)
-
-    print(players[0].hidden_board.hp)
-    print(players[1].hidden_board.hp)
-
 
 # Start of Game
     player_number = random.choice([0,1])
     while 0 < players[0].hidden_board.hp and 0 < players[1].hidden_board.hp:
         player = players[player_number]
         other_player = players[1-player_number]
-        guess_board = guess_boards[player_number]
-        hidden_board = hidden_boards[1-player_number]
         win_board = win_boards[player_number]
         win_rec = rectangles[player_number]
 
@@ -108,48 +99,18 @@ def play_game():
         cord = player.move(win_board)
 
         #Give move to other player to get hit/miss/sink
-        #result = other_player.lookup(cord)
+        result, sunk_ship_cords = other_player.lookup(cord)
         
         #update guess board and any other variables
-        #player.process(cord, result)
+        player.process(cord, result, sunk_ship_cords)
 
         #update graphics
-        #help.update_graphics(cord, result, other_player.hidden_board, win_rec)
+        help.update_graphics(cord, result, other_player.hidden_board, win_rec)
+        time.sleep(cons.tx)
+        if result == "Miss":
+            player_number = 1 - player_number
 
-        #if result == "Miss":
-            #player_number = 1 - player_number
-
-        if cord not in guess_board.cords_shot_at:
-            guess_board.cords_shot_at.append(cord)
-            x,y = cord
-            if help.fire(cord, hidden_board):
-                hidden_board.board[y][x] = "X"
-                guess_board.board[y][x] = 'X'
-                win_rec[y][x].setFill('red')
-                for ship in hidden_board.ships_on_board:
-                    if (x,y) in ship.ship_cords:
-                        ship.hp -= 1
-                        if ship.hp == 0:
-                            print("Hit!")
-                            print("You sunk a {name}".format(name = ship.name))
-                            for i in ship.ship_cords:
-                                x,y = i
-                                win_rec[y][x].setFill('black')
-                        else:
-                            print("Hit!")
-                hidden_board.hp -= 1
-                time.sleep(cons.tx)
-            else:
-                print("Miss")
-                hidden_board.board[y][x] = 'M'
-                guess_board.board[y][x] = 'M'
-                win_rec[y][x].setFill("white")
-                player_number = 1-player_number
-                print("turn over")
-                time.sleep(cons.tx)
-        else:
-            print("You've already fired at that location")
-    
+        
     if players[1].hidden_board.hp <= 0:
         print("The AI sunk all your ships, you lost")
     elif players[0].hidden_board.hp <= 0: 

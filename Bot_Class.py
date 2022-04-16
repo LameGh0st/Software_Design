@@ -45,8 +45,61 @@ class Bot(AbstractPlayer):
         else:
             return self.search()
 #------------------------------------------------------------------------------
-    def process(self, cord, result):
-        return super().process(cord, result)
+    def process(self, cord, result, ship_cords):
+        x,y = cord
+        if not self.destroy_mode and result == "Miss":
+            self.guess_board.board[y][x] = "M"
+            self.guess_board.cords_shot_at.append(cord)
+            self.last_shot = cord
+        elif not self.destroy_mode and result == "Hit":
+            self.guess_board.board[y][x] = "X"
+            self.guess_board.cords_shot_at.append(cord)
+            self.known_hits.append(cord)
+            self.last_shot = cord
+            self.destroy_mode = True
+            self.last_known_hit = cord
+            self.first_known_hit = cord
+        elif self.destroy and result == "Hit":
+            self.guess_board.board[y][x] = "X"
+            self.guess_board.cords_shot_at.append(cord)
+            self.known_hits.append(cord)
+            self.last_shot = cord
+            self.last_known_hit = cord
+        elif self.destroy_mode and result == "Miss":
+            self.guess_board.board[y][x] = "M"
+            self.guess_board.cords_shot_at.append(cord)
+            self.last_shot = cord
+            self.direction = self.direction[1:]
+            self.last_known_hit = self.first_known_hit
+        elif self.destroy_mode and result == "Sunk":
+            self.guess_board.board[y][x] = "X"
+            self.guess_board.cords_shot_at.append(cord)
+            self.known_hits.append(cord)
+            self.first_known_hit = None
+            self.direction = None
+            print(cord)
+            for i in ship_cords:
+                print(i)
+                print("Known Hits")
+                print(self.known_hits)
+                if i in self.known_hits:
+                    self.known_hits.remove(i)
+            if len(self.known_hits) == 0:
+                self.destroy_mode = False 
+                self.last_known_hit = None
+                self.first_known_hit = None
+                self.direction = None
+                self.search()
+            if len(self.known_hits) != 0:
+                self.last_known_hit = self.known_hits.pop()
+                self.first_known_hit = self.last_known_hit
+                self.direction = [(0,-1),(0,1),(1,0),(-1,0)]
+                random.shuffle(self.direction)
+                self.direction
+
+        
+        
+                
 #------------------------------------------------------------------------------
     def lookup(self, cord):
         return super().lookup(cord)
@@ -59,7 +112,7 @@ class Bot(AbstractPlayer):
         return cord
 
 #------------------------------------------------------------------------------
-    def destroy(self, bot_guess_board, player_hidden_board, board_of_rectangles, cords):
+    def destroy(self):
         print('destroy')
         dir_list = [(0,-1),(0,1),(1,0),(-1,0)]
         random.shuffle(dir_list)
@@ -70,77 +123,23 @@ class Bot(AbstractPlayer):
             self.last_known_hit = None
             self.first_known_hit = None
             self.direction = None
-            self.search(bot_guess_board, player_hidden_board, board_of_rectangles, cords)
-            return None
-        for ship in player_hidden_board.ships_on_board:
-                if self.last_known_hit in ship.ship_cords:
-                    if ship.hp == 0:
-                        self.first_known_hit = None
-                        self.direction = None
-                        for i in ship.ship_cords:
-                            if i in self.known_hits:
-                                self.known_hits.remove(i)
-                        if len(self.known_hits) == 0:
-                            self.destroy_mode = False 
-                            self.last_known_hit = None
-                            self.first_known_hit = None
-                            self.direction = None
-                            self.search(bot_guess_board, player_hidden_board, board_of_rectangles, cords)
-                            return None
-                        if len(self.known_hits) != 0:
-                            self.last_known_hit = self.known_hits.pop()
-                            self.first_known_hit = self.last_known_hit
-                            self.direction = [(0,-1),(0,1),(1,0),(-1,0)]
-                            random.shuffle(self.direction)
-                            self.direction
-
+            return self.search()
         dx,dy = self.direction[0]
         x,y = self.last_known_hit
         new_cord = (x+dx,y+dy)
-        while not help.legal_shot(bot_guess_board, new_cord):
+        while not help.legal_shot(self.guess_board, new_cord):
             self.direction = self.direction[1:]
             if len(self.direction) == 0:
                 self.destroy_mode = False 
                 self.last_known_hit = None
                 self.first_known_hit = None
                 self.direction = None
-                self.search(bot_guess_board, player_hidden_board, board_of_rectangles, cords)
-                return None
+                return self.search()
+
             dx,dy = self.direction[0]
             x,y = self.first_known_hit
             new_cord = (x+dx, y+dy)
         
-        cords.remove(new_cord)
-        x,y = new_cord
-        if help.fire(new_cord, player_hidden_board):
-            self.last_known_hit = new_cord
-            self.last_shot = new_cord
-            self.known_hits.append(new_cord)
-            bot_guess_board.board[y][x] = 'X'
-            player_hidden_board.board[y][x] = 'X'
-            board_of_rectangles[y][x].setFill('red')
-            bot_guess_board.cords_shot_at.append(new_cord)
-            for ship in player_hidden_board.ships_on_board:
-                if (x,y) in ship.ship_cords:
-                    ship.hp -= 1
-                    if ship.hp == 0:
-                        print("Hit!")
-                        print("The AI sunk a ship!")
-                        for i in ship.ship_cords:
-                            x,y = i
-                            board_of_rectangles[y][x].setFill('black')
-                    else:
-                        print("Hit!")
-            player_hidden_board.hp -= 1
-            #help.show_board(bot_guess_board.board)
-        else:
-            self.direction = self.direction[1:]
-            self.last_known_hit = self.first_known_hit
-            self.last_shot = new_cord
-            bot_guess_board.board[y][x] = 'M'
-            player_hidden_board.board[y][x] = 'M'
-            board_of_rectangles[y][x].setFill('white')
-            bot_guess_board.cords_shot_at.append(new_cord)
-            print('Miss')
-            #help.show_board(bot_guess_board.board)
+        self.possible_cords.remove(new_cord)
+        return new_cord
         

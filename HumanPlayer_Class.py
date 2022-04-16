@@ -104,7 +104,7 @@ class HumanPlayer(AbstractPlayer):
         cord = (x,y)
         return cord
 #-----------------------------------------------------------------------------
-    def process(self, cord, result):
+    def process(self, cord, result, ship_cords):
         x,y = cord
         if result == 'Miss':
             self.guess_board.board[y][x] = 'M'

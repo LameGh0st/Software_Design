@@ -6,27 +6,34 @@ class AbstractPlayer:
     def __init__(self):
         self.hidden_board = Board(10,10)
         self.guess_board = Board(10,10)
-
+#-----------------------------------------------------------------------
+    def get_ship_cords(self, cord):
+        for ship in self.hidden_board.ships_on_board:
+            if cord in ship.ship_cords:
+                return ship.ship_cords
+#-----------------------------------------------------------------------
     def placement(self):
         raise NotImplementedError()
-
+#-----------------------------------------------------------------------
     def move(self):
         raise NotImplementedError()
-
-    def process(self, cord, result):
+#-----------------------------------------------------------------------
+    def process(self, cord, result, ship_cords):
         raise NotImplementedError()
-
+#-----------------------------------------------------------------------
     def lookup(self, cord):
         x,y = cord
-        if help.fire(cord,self.hidden_board.board[y][x]):
+        if help.fire(cord,self.hidden_board):
             self.hidden_board.board[y][x] = "X"
+            self.hidden_board.hp -= 1
             for ship in self.hidden_board.ships_on_board:
-                if (x,y) in ship.ship_cords:
+                if cord in ship.ship_cords:
                     ship.hp -= 1
                     if ship.hp == 0:
-                        return "Sunk"
-            return "Hit"
+                        ship_cords = self.get_ship_cords(cord)
+                        return ("Sunk", ship_cords)
+            return ("Hit", [])
         else:
-            self.hidden_board[y][x] = "M"
-            return "Miss"
+            self.hidden_board.board[y][x] = "M"
+            return ("Miss", [])
 
