@@ -91,7 +91,7 @@ def update_graphics(cord, result, hidden_board, win_rec):
     x, y = cord
     if result == "Hit":
         win_rec[y][x].setFill('red')
-    if result == "Sunk":
+    if result == "Sunk" or result == "Game Over":
         for ship in hidden_board.ships_on_board:
             if (x,y) in ship.ship_cords:
                 for i in ship.ship_cords:

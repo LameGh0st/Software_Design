@@ -101,7 +101,6 @@ class Bot(AbstractPlayer):
         return super().lookup(cord)
 #------------------------------------------------------------------------------
     def search(self):
-        print('search')
         cord = self.possible_cords[0] 
         x,y = cord
         self.possible_cords.remove(cord)
@@ -109,7 +108,6 @@ class Bot(AbstractPlayer):
 
 #------------------------------------------------------------------------------
     def destroy(self):
-        print('destroy')
         dir_list = [(0,-1),(0,1),(1,0),(-1,0)]
         random.shuffle(dir_list)
         if self.direction == None:

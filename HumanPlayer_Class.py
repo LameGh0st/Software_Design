@@ -108,7 +108,7 @@ class HumanPlayer(AbstractPlayer):
         x,y = cord
         if result == 'Miss':
             self.guess_board.board[y][x] = 'M'
-        if result == 'Hit' or result == 'Sunk':
+        else:
             self.guess_board.board[y][x] = 'X'
 #-----------------------------------------------------------------------------
     def lookup(self, cord):
