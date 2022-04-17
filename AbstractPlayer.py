@@ -26,6 +26,8 @@ class AbstractPlayer:
         if help.fire(cord,self.hidden_board):
             self.hidden_board.board[y][x] = "X"
             self.hidden_board.hp -= 1
+            if self.hidden_board.hp == 0:
+                return("Game Over", [])
             for ship in self.hidden_board.ships_on_board:
                 if cord in ship.ship_cords:
                     ship.hp -= 1

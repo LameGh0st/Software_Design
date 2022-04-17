@@ -89,7 +89,7 @@ def play_game():
 
 # Start of Game
     player_number = random.choice([0,1])
-    while 0 < players[0].hidden_board.hp and 0 < players[1].hidden_board.hp:
+    while True:
         player = players[player_number]
         other_player = players[1-player_number]
         win_board = win_boards[player_number]
@@ -107,6 +107,8 @@ def play_game():
         #update graphics
         help.update_graphics(cord, result, other_player.hidden_board, win_rec)
         time.sleep(cons.tx)
+        if result == "Game Over":
+            break
         if result == "Miss":
             player_number = 1 - player_number
 

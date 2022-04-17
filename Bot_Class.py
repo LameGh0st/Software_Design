@@ -77,11 +77,7 @@ class Bot(AbstractPlayer):
             self.known_hits.append(cord)
             self.first_known_hit = None
             self.direction = None
-            print(cord)
             for i in ship_cords:
-                print(i)
-                print("Known Hits")
-                print(self.known_hits)
                 if i in self.known_hits:
                     self.known_hits.remove(i)
             if len(self.known_hits) == 0:
@@ -140,6 +136,7 @@ class Bot(AbstractPlayer):
             x,y = self.first_known_hit
             new_cord = (x+dx, y+dy)
         
-        self.possible_cords.remove(new_cord)
+        if new_cord in self.possible_cords:
+            self.possible_cords.remove(new_cord)
         return new_cord
         
