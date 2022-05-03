@@ -57,6 +57,14 @@ class Board:
             self.board[y][x]= '1'
             ship.ship_cords.append((x,y))
         self.ships_on_board.append(ship)
+
+    def reset(self):
+        self.board = []
+        for i in range(self.length):
+            row = []
+            for j in range(self.width):
+                row.append(0)
+            self.board.append(row)
         
 
 

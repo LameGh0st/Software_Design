@@ -4,6 +4,7 @@ from Ship_Class import *
 from graphics import *
 import time
 from Bot_Class import *
+from Smarter_Bot_Class import *
 import Helpers as help
 import Constants as cons
 from HumanPlayer_Class import *
@@ -11,7 +12,7 @@ from HumanPlayer_Class import *
 #-----------------------------------------------------------------------------
 def play_game():
 
-    bot = Bot()
+    bot = Smarter_Bot()
     human = HumanPlayer()
 
     
@@ -99,10 +100,14 @@ def play_game():
         cord = player.move(win_board)
 
         #Give move to other player to get hit/miss/sink
-        result, sunk_ship_cords = other_player.lookup(cord)
+        data  = other_player.lookup(cord)
+        result = data[0]
+        sunk_ship_cords = data[1]
+        sunk_ship_length = data[2]
+
         
         #update guess board and any other variables
-        player.process(cord, result, sunk_ship_cords)
+        player.process(cord, result, sunk_ship_cords, sunk_ship_length)
 
         #update graphics
         help.update_graphics(cord, result, other_player.hidden_board, win_rec)
