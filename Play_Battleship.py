@@ -12,7 +12,8 @@ from HumanPlayer_Class import *
 #-----------------------------------------------------------------------------
 def play_game():
 
-    bot = Smarter_Bot()
+    #Creates the players. bot can equal Bot() or Smarter_Bot()
+    bot = Bot()
     human = HumanPlayer()
 
     
@@ -20,6 +21,7 @@ def play_game():
     p1 = Point(x,y)
     p2 = Point(x + cons.delta_width, y + cons.delta_length)
 
+    #Create Graphics Window 
     win_guess_board = GraphWin("Guessing Board", cons.width, cons.length)
     win_known_board = GraphWin("Your Board", cons.width, cons.length)
     win_guess_board.setBackground("white")
@@ -72,9 +74,11 @@ def play_game():
         p1 = Point(x,y)
         p2 = Point(x + cons.delta_width, y + cons.delta_length)
 
+    #Players place ships
     bot.placement()
     human.placement(win_known_board, known_rectangles)
 
+    #Update the human players hidden board to show their ships
     for i in range(human.hidden_board.length):
         for j in range(human.hidden_board.width):
             if human.hidden_board.board[i][j] == '1':
@@ -112,6 +116,7 @@ def play_game():
         #update graphics
         help.update_graphics(cord, result, other_player.hidden_board, win_rec)
         time.sleep(cons.tx)
+
         if result == "Game Over":
             break
         if result == "Miss":

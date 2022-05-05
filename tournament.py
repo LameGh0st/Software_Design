@@ -11,6 +11,7 @@ def tournament(players, number_of_games):
     player1_wins = 0
     player2_wins = 0
 
+    #Start of tournament/setting start variables for each game
     for i in range(number_of_games):
         print("game {}.".format(i))
         player1.reset()
@@ -20,6 +21,7 @@ def tournament(players, number_of_games):
         player1.hidden_board.hp = help.get_board_values(player1.hidden_board.board)
         player2.hidden_board.hp = help.get_board_values(player2.hidden_board.board)
 
+        #randomly choose starting player then start game loop
         player_number = random.choice([0,1])
         while True:
             player = players[player_number]
@@ -44,6 +46,7 @@ def tournament(players, number_of_games):
             player2_wins += 1
         elif player2.hidden_board.hp <= 0:
             player1_wins += 1
+            
     print("Out of {} games, player1 won {} with a winrate of {}".format(
         number_of_games, player1_wins, (player1_wins / number_of_games) * 100
     ))
@@ -53,4 +56,4 @@ def tournament(players, number_of_games):
 
 
 if __name__ == '__main__':
-    tournament([Bot(), Smarter_Bot()], 500)
+    tournament([Bot(), Smarter_Bot()], 100)
