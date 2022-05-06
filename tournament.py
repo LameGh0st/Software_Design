@@ -13,7 +13,8 @@ def tournament(players, number_of_games):
 
     #Start of tournament/setting start variables for each game
     for i in range(number_of_games):
-        print("game {}.".format(i))
+        #used for bug testing, use to see what game bugs happen
+        #print("game {}.".format(i))
         player1.reset()
         player2.reset()
         player1.placement()
@@ -56,4 +57,4 @@ def tournament(players, number_of_games):
 
 
 if __name__ == '__main__':
-    tournament([Bot(), Smarter_Bot()], 100)
+    tournament([Bot(), Bot()], 100)
