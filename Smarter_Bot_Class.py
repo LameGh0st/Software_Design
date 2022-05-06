@@ -6,7 +6,7 @@ import Helpers as help
 import Constants as cons
 from AbstractPlayer import AbstractPlayer
 
-class Bot(AbstractPlayer):
+class Smarter_Bot(AbstractPlayer):
     def __init__(self):
         self.hidden_board = Board(10,10)
         self.guess_board = Board(10,10)
@@ -21,6 +21,7 @@ class Bot(AbstractPlayer):
                 for j in range(cons.bot_guess_board.width):
                     self.possible_cords.append((j, i))
         random.shuffle(self.possible_cords)
+        self.ships_left = [5,4,3,3,2]
 
 #------------------------------------------------------------------------------
     def placement(self):
@@ -72,6 +73,7 @@ class Bot(AbstractPlayer):
             self.last_known_hit = self.first_known_hit
         elif self.destroy_mode and result == "Sunk":
             self.guess_board.board[y][x] = "X"
+            self.ships_left.remove(sunk_ship_length)
             self.guess_board.cords_shot_at.append(cord)
             self.known_hits.append(cord)
             self.first_known_hit = None
@@ -99,9 +101,58 @@ class Bot(AbstractPlayer):
     def lookup(self, cord):
         return super().lookup(cord)
 #------------------------------------------------------------------------------
+    def check_vertical(self, cord, size):
+        count = 1
+        x,y = cord
+        dx,dy = (0,-1)
+        new_cord = (x+dx, y+dy)
+        while help.legal_shot(self.guess_board, new_cord):
+            count += 1
+            x,y = new_cord
+            new_cord = (x+dx, y+dy)
+        if count >= size:
+            return True
+        x,y = cord
+        dx,dy = (0,1)
+        new_cord = (x+dx, y+dy)
+        while help.legal_shot(self.guess_board, new_cord):
+            count += 1
+            x,y = new_cord
+            new_cord = (x+dx, y+dy)
+        if count >= size:
+            return True
+        return False
+#------------------------------------------------------------------------------
+    def check_horizontal(self, cord, size):
+        count = 1
+        x,y = cord
+        dx,dy = (-1,0)
+        new_cord = (x+dx, y+dy)
+        while help.legal_shot(self.guess_board, new_cord):
+            count += 1
+            x,y = new_cord
+            new_cord = (x+dx, y+dy)
+        if count >= size:
+            return True
+        x,y = cord
+        dx,dy = (1,0)
+        new_cord = (x+dx, y+dy)
+        while help.legal_shot(self.guess_board, new_cord):
+            count += 1
+            x,y = new_cord
+            new_cord = (x+dx, y+dy)
+        if count >= size:
+            return True
+        return False
+            
+
+#------------------------------------------------------------------------------
     def search(self):
         cord = self.possible_cords[0] 
-        x,y = cord
+        while not self.check_vertical(cord, self.ships_left[0]) and not self.check_horizontal(cord, self.ships_left[0]):
+            self.possible_cords.remove(cord)
+            self.possible_cords.append(cord)
+            cord = self.possible_cords[0]
         self.possible_cords.remove(cord)
         return cord
 
@@ -121,7 +172,15 @@ class Bot(AbstractPlayer):
         x,y = self.last_known_hit
         new_cord = (x+dx,y+dy)
         while not help.legal_shot(self.guess_board, new_cord):
-            self.direction = self.direction[1:]
+            if self.last_known_hit != self.first_known_hit:
+                self.direction.remove((dx,dy))
+                if (-dx,-dy) in self.direction:
+                    self.direction.remove((-dx,-dy))
+                    self.direction = [(-dx,-dy)] + self.direction
+            else:
+                self.direction = self.direction[1:]
+
+            
             if len(self.direction) == 0:
                 self.destroy_mode = False 
                 self.last_known_hit = None
@@ -151,3 +210,4 @@ class Bot(AbstractPlayer):
                 for j in range(cons.bot_guess_board.width):
                     self.possible_cords.append((j, i))
         random.shuffle(self.possible_cords)
+        self.ships_left = [5,4,3,3,2]       

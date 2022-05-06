@@ -6,7 +6,6 @@ player_guess_board = Board(10,10)
 bot_hidden_board = Board(10,10)
 bot_guess_board = Board(10,10)
 
-
 length = 500
 width = 500
 offset = 50

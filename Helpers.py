@@ -1,12 +1,12 @@
 import random
 from graphics import *
 from pip import main
-
+ 
 
 #-----------------------------------------------------------------------------
-def fire(cor, board):
+def fire(cor, Board):
     x,y = cor
-    if board.board[y][x] == '1':
+    if Board.board[y][x] == '1':
         return True
     else:
         return False
@@ -86,5 +86,16 @@ def legal_shot(Board, cord):
         return False
     else:
         return True
-
-
+#------------------------------------------------------------------------------
+def update_graphics(cord, result, hidden_board, win_rec):
+    x, y = cord
+    if result == "Hit":
+        win_rec[y][x].setFill('red')
+    if result == "Sunk" or result == "Game Over":
+        for ship in hidden_board.ships_on_board:
+            if (x,y) in ship.ship_cords:
+                for i in ship.ship_cords:
+                    x,y = i
+                    win_rec[y][x].setFill('black')
+    if result == "Miss":
+        win_rec[y][x].setFill('white')
